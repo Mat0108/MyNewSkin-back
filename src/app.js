@@ -30,14 +30,14 @@ const swaggerOptions={
 }
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions)
-server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+// server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 process.env.TZ = 'Europe/Paris'
  
-mongoose.connect("mongodb://mongo/timerdb", {
+mongoose.connect("mongodb://mongo/mdsdp", {
     useNewUrlParser: true,
-    user: user,
-    pass: pwd
+    user: "mdsuser",
+    pass: "mdspass"
 }).then(() => {
     console.log('Connexion à la base de données avec succès');
 }).catch(err => {
@@ -52,8 +52,10 @@ server.use(express.json());
 
 
 const userRoute = require("./api/routes/userRoute");
-userRoute(server);
+
 const { application } = require('express');
+
+userRoute(server);
 
 
 server.listen(port, hostname);
