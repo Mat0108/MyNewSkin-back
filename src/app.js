@@ -51,7 +51,8 @@ server.use(cors());
 server.use(express.json());
 
 
-
+const userRoute = require("./api/routes/userRoute");
+userRoute(server);
 const { application } = require('express');
 
 
