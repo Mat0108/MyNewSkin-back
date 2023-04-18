@@ -1,0 +1,66 @@
+
+version: '3.3'
+services:
+  node:
+    container_name: node
+    image: 'node:latest'
+    working_dir: /home/node/app
+    env_file:
+      - .env
+    command:
+      - /bin/sh
+      - '-c'
+      - 'npm install && npm run watch'
+    ports:
+      - '3000:3000'
+    volumes:
+      - './src:/home/node/app'
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    networks:
+      - back
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      MONGO_INITDB_DATABASE: timerdb
+      MONGO_INITDB_ROOT_USERNAME: "${USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${PASSWORD}"
+    restart: always
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    working_dir: /data/db
+    ports:
+      - '27017:27017'
+    networks:
+      - back
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    container_name: mongo_express
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_AUTH_DATABASE: mdsbp
+      ME_CONFIG_MONGODB_AUTH_USERNAME: "${USER}"
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: "${PASSWORD}"
+      ME_CONFIG_BASICAUTH_USERNAME: "${USER}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "${PASSWORD}"
+    ports:
+      - '8081:8081'
+    depends_on:
+      - mongo
+    networks:
+      - back
+
+networks:
+  back:
+    driver: bridge
