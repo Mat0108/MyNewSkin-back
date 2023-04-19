@@ -29,8 +29,8 @@ services:
     container_name: mongo
     environment:
       MONGO_INITDB_DATABASE: mdsdp
-      MONGO_INITDB_ROOT_USERNAME: mdsuser
-      MONGO_INITDB_ROOT_PASSWORD: mdspass
+      MONGO_INITDB_ROOT_USERNAME: ${USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${PASSWORD}
     restart: always
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
@@ -50,10 +50,10 @@ services:
     environment:
       ME_CONFIG_MONGODB_SERVER: mongo
       ME_CONFIG_MONGODB_AUTH_DATABASE: mdsdp
-      ME_CONFIG_MONGODB_AUTH_USERNAME: mdsuser
-      ME_CONFIG_MONGODB_AUTH_PASSWORD: mdspass
-      ME_CONFIG_BASICAUTH_USERNAME: mdsuser
-      ME_CONFIG_BASICAUTH_PASSWORD: mdspass
+      ME_CONFIG_MONGODB_AUTH_USERNAME: ${USER}
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: ${PASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${PASSWORD}
     ports:
       - '8081:8081'
     depends_on:

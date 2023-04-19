@@ -9,8 +9,8 @@ const hostname = "0.0.0.0";
 const port = 3000;
 const server = express();
 const mongoose = require("mongoose");
-const user = process.env.user;
-const pwd = process.env.password;
+const user = process.env.USER;
+const password = process.env.PASSWORD;
 const swaggerOptions={
     definition:{
         openapi:'3.0.0',
@@ -36,8 +36,8 @@ process.env.TZ = 'Europe/Paris'
  
 mongoose.connect("mongodb://mongo/mdsdp", {
     useNewUrlParser: true,
-    user: "mdsuser",
-    pass: "mdspass"
+    user: `${user}`,
+    pass: `${password}`
 }).then(() => {
     console.log('Connexion à la base de données avec succès');
 }).catch(err => {

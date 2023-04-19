@@ -1,11 +1,11 @@
-// const user = process.env.USER;
-// const pwd = process.env.PASSWORD;
+const user = process.env.USER;
+const password = process.env.PASSWORD;
 db.createUser ({
-    user : "mdsuser",
-    pwd : "mdspass",
+    user : `${user}`,
+    pwd : `${password}`,
     roles : [{
         role : "readWrite", db : "mdsdp"
     }]
 });
 
-db.auth('mdsuser','mdspass');
+db.auth(`${user}`,`${password}`);
