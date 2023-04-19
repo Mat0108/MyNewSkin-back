@@ -52,10 +52,11 @@ server.use(express.json());
 
 
 const userRoute = require("./api/routes/userRoute");
-
+const formRoute = require("./api/routes/formRoute")
 const { application } = require('express');
 
 userRoute(server);
+formRoute(server);
 
 
 server.listen(port, hostname);
