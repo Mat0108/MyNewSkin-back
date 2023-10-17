@@ -1,19 +1,26 @@
 {
   "name": "po-skin-back",
   "version": "1.0.0",
-  "description": "",
-  "main": "init-mongo.js",
+  "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Mat0108/Po-Skin-Back.git"
-  },
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "express",
+    "rest",
+    "api",
+    "mongodb"
+  ],
+  "author": "bezkoder",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Mat0108/Po-Skin-Back/issues"
-  },
-  "homepage": "https://github.com/Mat0108/Po-Skin-Back#readme"
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.10",
+    "jsonwebtoken": "^8.5.1",
+    "bcrypt": "^5.1.0"    
+  }
 }
