@@ -1,0 +1,19 @@
+{
+  "name": "po-skin-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "init-mongo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mat0108/Po-Skin-Back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mat0108/Po-Skin-Back/issues"
+  },
+  "homepage": "https://github.com/Mat0108/Po-Skin-Back#readme"
+}
