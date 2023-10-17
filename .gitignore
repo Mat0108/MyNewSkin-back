@@ -4,8 +4,8 @@
 /src/node_modules
 /.pnp
 .pnp.js
-/mongo-volume
-package-lock.json
+/mongo-volume/journal
+/mongo-volume/diagnostic.data
 
 # testing
 /coverage
@@ -24,3 +24,6 @@ package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local Netlify folder
+.netlify
