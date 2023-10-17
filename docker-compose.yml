@@ -12,7 +12,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
       - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
     ports:
-      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+      - $MONGODB_PORT:$MONGODB_PORT
     #on crée un volume pour stocker les données de mongo, pour stocker de maniere persitance 
     volumes:
       - ./mongo-volume:/data/db
@@ -27,7 +27,7 @@ services:
     # variable d'environment pour permettre de confirgurer l'acces de mongo-express à mongo
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_PORT=$MONGODB_PORT
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
       - ME_CONFIG_MONGODB_AUTH_DATABASE=$MONGODB_DATABASE
       - ME_CONFIG_MONGODB_AUTH_USERNAME=$MONGODB_USER
@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
     env_file: ./.env
     ports:
-      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+      - $NODE_PORT:$NODE_PORT
     # variable d'environment pour permettre de confirgurer l'acces du server à mongo
     environment:
       - UID=&UID
@@ -59,7 +59,7 @@ services:
       - DB_USER=$MONGODB_USER
       - DB_PASSWORD=$MONGODB_PASSWORD
       - DB_NAME=$MONGODB_DATABASE
-      - DB_PORT=$MONGODB_DOCKER_PORT
+      - DB_PORT=$MONGODB_PORT
     stdin_open: true
     tty: true
     cap_drop:

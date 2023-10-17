@@ -35,8 +35,10 @@ app.get("/", (req, res) => {
 });
 
 const userRoute = require("./app/routes/userRoute");
+const blogRoute = require("./app/routes/blogRoute");
 
 userRoute(app);
+blogRoute(app);
 // const messageRoute = require("./app/routes/messageRoutes")
 const { application } = require('express');
 // Inscription d'utilisateur
