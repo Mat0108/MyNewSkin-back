@@ -28,12 +28,12 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb
       - ME_CONFIG_MONGODB_PORT=27017
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
-      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
-      - ME_CONFIG_MONGODB_AUTH_USERNAME=${MONGODB_USER}
-      - ME_CONFIG_MONGODB_AUTH_PASSWORD=${MONGODB_PASSWORD}
-      - ME_CONFIG_BASICAUTH_USERNAME=${MONGODB_USER}
-      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGODB_PASSWORD}
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=$MONGODB_DATABASE
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=$MONGODB_USER
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=$MONGODB_PASSWORD
+      - ME_CONFIG_BASICAUTH_USERNAME=$MONGODB_USER
+      - ME_CONFIG_BASICAUTH_PASSWORD=$MONGODB_PASSWORD
     ports:
       - '$MONGODB_EXPRESS_PORT:$MONGODB_EXPRESS_PORT'
     depends_on:
@@ -66,32 +66,12 @@ services:
       - ALL
     networks:
       - server
-  front:
-    container_name: front
-    depends_on:
-      - mongodb
-    #on build le server avec le dockerfile du dossier Front
-    build: ./Front
-    restart: unless-stopped
-    env_file: ./.env
-    environment:
-      - UID=&UID
-      - GUD=&GUD
-    ports:
-      - $REACT_PORT:$REACT_PORT
-    stdin_open: true
-    tty: true
-    cap_drop:
-      - ALL
-    networks:
-      - front
-
-
+ 
 volumes:
   db:
 
 networks:
   server:
     driver: bridge
-  front:
-    driver: bridge
+#mongodb://poskinadmin:passpo349535@mongodb:27017/poskindb
+#mongodb://poskinadmin:passpo349535@mongodb:27017/poskindb?authSource=admin
