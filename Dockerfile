@@ -8,11 +8,7 @@ EXPOSE 8080:8080
 
 WORKDIR /server
 
-COPY package.json ./
-COPY package-lock.json ./
-
-RUN npm config set unsafe-perm true
-RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
+COPY package.json .
 
 RUN npm install
 
