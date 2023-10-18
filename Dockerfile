@@ -2,6 +2,8 @@ FROM node:20-alpine3.17 as node
 
 USER root
 
+EXPOSE 8080
+
 WORKDIR /server
 
 COPY package.json .
