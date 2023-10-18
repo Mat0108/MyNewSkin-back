@@ -26,11 +26,7 @@ let rdvSchema = new Schema({
   CompteClient: {
     type: Schema.Types.ObjectId,
     ref: "User",
-  },
-  CompteExpert: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
+  }
 });
 
 module.exports = mongoose.model("Rdv", rdvSchema);
