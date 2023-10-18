@@ -6,7 +6,7 @@ const {
   DB_NAME,
   DATABASE_URL
 } = process.env;
-
+require("dotenv").config();
 module.exports = {
   url: DATABASE_URL
 };
