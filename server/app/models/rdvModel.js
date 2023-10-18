@@ -22,7 +22,7 @@ let rdvSchema = new Schema({
     type: Number,
     required: true,
   },
-  // On ajoute ici, les références aux utilisateurs (compte client et compte expert)
+  // On ajoute ici, les références aux utilisateurs (compte client)
   CompteClient: {
     type: Schema.Types.ObjectId,
     ref: "User",
