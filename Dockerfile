@@ -1,10 +1,10 @@
-FROM node:20-alpine3.17 as node
+FROM node:18
 
 USER root
 
-EXPOSE 8080:8080
+EXPOSE 8080
 
-WORKDIR /server
+WORKDIR /app
 
 COPY package.json .
 
