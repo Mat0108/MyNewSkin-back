@@ -16,8 +16,7 @@ const db = require("./app/models");
 
 console.log(db.url);
 
-mongoose
-  .connect("mongodb://admin:sVCIgSQGJTK76pv2eFdKEuiO@MongoS3601A.back4app.com:27017/2fb4ddc747cc4adbb0d8b9415add6eab ")
+db.mongoose.connect(db.url)
   .then(() => {
     console.log("Connected to the database!");
   })
