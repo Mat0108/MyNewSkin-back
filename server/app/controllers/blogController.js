@@ -36,6 +36,20 @@ exports.getBlog = (req, res) => {
         }
     })
 }
+exports.getBlogByField = (req, res) => {
+
+    Blog.find({altimagepresentation:req.params.altId}, (error, blog) => {
+        if (error) {
+            res.status(401);
+            console.log(error);
+            res.json({ message:error });
+        }
+        else {
+            res.status(200);
+            res.json(blog);
+        }
+    })
+}
 
 exports.getAllBlog = (req, res) => {
     Blog.find({}, (error, blog) => {
