@@ -1,11 +1,9 @@
-const user = process.env.USER;
-const password = process.env.PASSWORD;
 db.createUser ({
-    user : `${user}`,
-    pwd : `${password}`,
+    user : `${process.env.MONGODB_USER}`,
+    pwd : `${process.env.MONGODB_USER}`,
     roles : [{
-        role : "readWrite", db : "mdsdp"
+        role : "readWrite", db : `${process.env.MONGODB_DATABASE}`
     }]
 });
 
-db.auth(`${user}`,`${password}`);
+db.auth(`${process.env.MONGODB_USER}`, `${process.env.MONGODB_PASSWORD}`);

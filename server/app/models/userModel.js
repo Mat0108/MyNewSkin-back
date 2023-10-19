@@ -23,7 +23,15 @@ let userSchema = new Schema({
         type: Boolean,
         required: true,
         default: 0
-    }
+    },
+    groups: [{
+        type: Schema.Types.ObjectId,
+        ref: "Group",
+    }],
+    projects: [{
+        type: Schema.Types.ObjectId,
+        ref: "Project",
+    }]
 });
 
 module.exports = mongoose.model("User", userSchema);

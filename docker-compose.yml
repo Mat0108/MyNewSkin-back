@@ -1,66 +1,74 @@
+version: "3.8"
 
-version: '1.0'
 services:
-  node:
-    container_name: node
-    image: 'node:latest'
-    working_dir: /home/node/app
-    env_file:
-      - .env
-    command:
-      - /bin/sh
-      - '-c'
-      - 'npm install && npm run watch'
-    ports:
-      - '3000:3000'
-    volumes:
-      - './src:/home/node/app'
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    depends_on:
-      - mongo
-    links:
-      - mongo
-    networks:
-      - back
-
-  mongo:
-    image: mongo
-    container_name: mongo
+  mongodb:
+    image: mongo:latest
+    restart: unless-stopped
+    container_name: mongodb
+    # variable d'environment pour setup mongo 
     environment:
-      MONGO_INITDB_DATABASE: mdsdp
-      MONGO_INITDB_ROOT_USERNAME: ${USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${PASSWORD}
-    restart: always
+      MONGO_INITDB_DATABASE: $MONGODB_DATABASE
+      MONGO_INITDB_ROOT_USERNAME: $MONGODB_USER
+      MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
+    ports:
+      - $MONGODB_PORT:$MONGODB_PORT
+    #on crée un volume pour stocker les données de mongo, pour stocker de maniere persitance 
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./mongo-volume:/data/db
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     working_dir: /data/db
-    ports:
-      - '27017:27017'
     networks:
-      - back
-
+      - server
   mongo-express:
+    # on utilise la derniere version disponible de mongo-express
     image: mongo-express:latest
     restart: always
     container_name: mongo_express
+    # variable d'environment pour permettre de confirgurer l'acces de mongo-express à mongo
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo
-      ME_CONFIG_MONGODB_AUTH_DATABASE: mdsdp
-      ME_CONFIG_MONGODB_AUTH_USERNAME: ${USER}
-      ME_CONFIG_MONGODB_AUTH_PASSWORD: ${PASSWORD}
-      ME_CONFIG_BASICAUTH_USERNAME: ${USER}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${PASSWORD}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGODB_USER
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGODB_PASSWORD
+      ME_CONFIG_MONGODB_URL: $MONGODB_URL
+      ME_CONFIG_BASICAUTH_USERNAME: $MONGODB_USER
+      ME_CONFIG_BASICAUTH_PASSWORD: $MONGODB_PASSWORD
     ports:
-      - '8081:8081'
+      - '$MONGODB_EXPRESS_PORT:$MONGODB_EXPRESS_PORT'
     depends_on:
-      - mongo
+      - mongodb
     networks:
-      - back
+      - server
+
+  server:
+    container_name: server
+    depends_on:
+      - mongodb
+    #on build le server avec le dockerfile du dossier server
+    build: ./server
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - $NODE_PORT:$NODE_PORT
+    # variable d'environment pour permettre de confirgurer l'acces du server à mongo
+    environment:
+      - UID=&UID
+      - GUD=&GUD
+      - DB_HOST=mongodb
+      - DB_USER=$MONGODB_USER
+      - DB_PASSWORD=$MONGODB_PASSWORD
+      - DB_NAME=$MONGODB_DATABASE
+      - DB_PORT=$MONGODB_PORT
+    stdin_open: true
+    tty: true
+    cap_drop:
+      - ALL
+    networks:
+      - server
+ 
+volumes:
+  db:
 
 networks:
-  back:
+  server:
     driver: bridge
+#mongodb://poskinadmin:passpo349535@mongodb:27017/poskindb
+#mongodb://poskinadmin:passpo349535@mongodb:27017/poskindb?authSource=admin
