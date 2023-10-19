@@ -1,17 +1,19 @@
 const Blog = require("../models/blogModel");
 exports.setBlog  = (req, res) => {
     let newBlog = new Blog(req.body);
-    newBlog.titlelist= newBlog.titlelist.toString().split(',');
-    newBlog.textlist= newBlog.textlist.toString().split(',');
-    newBlog.titlelist= newBlog.titlelist.toString().split(',');
-    newBlog.altimage= newBlog.altimage.toString().split(',');
-    newBlog.textcolor= newBlog.textcolor.toString().split(',');
-    newBlog.layout= newBlog.layout.toString().split(',');
+
+    newBlog.titlelist= newBlog.titlelist.toString().split('#%');
+    newBlog.textlist= newBlog.textlist.toString().split('#%');
+    newBlog.imagelist= newBlog.imagelist.toString().split('#%');
+    newBlog.altimage= newBlog.altimage.toString().split('#%');
+    newBlog.textcolor= newBlog.textcolor.toString().split('#%');
+    newBlog.layout= newBlog.layout.toString().split('#%');
+    
     newBlog.save((error, blog) => {
         if (error) {
             res.status(401);
             console.log(error);
-            res.json({ message: "Rêquete invalide" });
+            res.json({ message: error});
         }
         else {
             res.status(200);
