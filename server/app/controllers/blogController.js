@@ -26,7 +26,7 @@ exports.getBlog = (req, res) => {
         if (error) {
             res.status(401);
             console.log(error);
-            res.json({ message: "Rêquete invalide" });
+            res.json({ message:error });
         }
         else {
             res.status(200);
@@ -40,7 +40,7 @@ exports.getAllBlog = (req, res) => {
         if (error) {
             res.status(401);
             console.log(error);
-            res.json({ message: "Rêquete invalide" });
+            res.json({ message:error });
         }
         else {
             res.status(200);

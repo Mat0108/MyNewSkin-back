@@ -1,10 +1,8 @@
-# On utilise la version 20-alpine3.17 de l'image Node 
-FROM node:20-alpine3.17 as node
+FROM node:18
 
-#On utilise un user n'ayant pas les permissions root 
-USER node 
+USER root
 
-WORKDIR /server
+WORKDIR /app
 
 COPY package.json .
 
@@ -12,5 +10,6 @@ RUN npm install
 
 COPY . .
 
-#On lance l'application
+EXPOSE 8080
+
 CMD ["npm", "start"]
