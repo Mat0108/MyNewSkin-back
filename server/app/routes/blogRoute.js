@@ -5,6 +5,7 @@ module.exports = (server) => {
 
     server.post("/blog/set", cors(), blogController.setBlog);
     server.get("/blog/",cors(),blogController.getAllBlog)
-    server.get("/blog/get/:blogId",cors(),blogController.getBlog)
+    server.get("/blog/get/id/:blogId",cors(),blogController.getBlog)
+    server.get("/blog/get/alt/:altId",cors(),blogController.getBlogByField)
     server.delete("/blog/get/:blogId",cors(),blogController.deleteBlog)
 }
