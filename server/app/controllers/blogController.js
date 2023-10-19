@@ -1,6 +1,7 @@
 const Blog = require("../models/blogModel");
 exports.setBlog  = (req, res) => {
     let newBlog = new Blog(req.body);
+    console.log(newBlog)
     newBlog.titlelist= newBlog.titlelist.toString().split('#%');
     newBlog.textlist= newBlog.textlist.toString().split('#%');
     newBlog.titlelist= newBlog.titlelist.toString().split('#%');
