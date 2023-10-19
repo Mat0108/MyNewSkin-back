@@ -11,6 +11,10 @@ let blogSchema = new Schema({
         type:String,
         require: true
     },
+    altimagepresentation:{
+        type:String,
+        require:true
+    },
     textpresentation:{
         type:String,
         require: true
