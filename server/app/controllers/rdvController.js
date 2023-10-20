@@ -1,61 +1,96 @@
 const Rdv = require("../models/rdvModel"); 
+const User = require('../models/userModel');
+
 
 // Contrôleur pour créer un nouveau rendez-vous
-exports.createRdv = async (req, res) => {
-  try {
-    const newRdv = new Rdv(req.body);
-    const savedRdv = await newRdv.save();
-    res.status(201).json(savedRdv);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+exports.createRdv = (req, res) => {
+    User.findOne({ email: req.body.CompteClient }, (error, CompteClient) => {
+        if (error) {
+            res.status(500);
+            console.log(error);
+            res.json({ message: "CompteClient non trouvé" });
+        } else {
+                User.findOne({ email: { $in: req.body.CompteExpert } }, (error, CompteExpert) => {
+                    if (error) {
+                        res.status(500);
+                        console.log(error);
+                        res.json({ message: "CompteExpert non trouvés" });
+                    } else {
+                        let newRdv = new Rdv({
+                            DateDebut: new Date(req.body.DateDebut),
+                            DateFin: new Date(req.body.DateFin),
+                            Confirmation:req.body.Confirmation,
+                            CompteClient: CompteClient._id,
+                            CompteExpert: CompteExpert._id,
+                        });
+
+                        newRdv.save((error, rdv) => {
+                            if (error) {
+                                res.status(401);
+                                // res.json({ message: error });
+                                res.json({ message: "Échec de la création du rendez-vous" });
+                            } else {
+                                res.status(200);
+                                res.json({ message: `Rendez-vous créé `});
+                            }
+                        });
+                    }
+                });
+        }
+    });
 };
 
 // Contrôleur pour récupérer tous les rendez-vous
-exports.getAllRdvs = async (req, res) => {
-  try {
-    const rdvs = await Rdv.find();
-    res.status(200).json(rdvs);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+exports.getAllRdvs = (req, res) => {
+  Rdv.find({}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
+    if (error) {
+      res.status(401);
+      console.log(error);
+      res.json({ message:error });
   }
+  else {
+      res.status(200);
+      res.json(rdv);
+  }
+
+  });
 };
 
 // Contrôleur pour récupérer un rendez-vous par son ID
 exports.getRdvById = async (req, res) => {
-  try {
-    const rdv = await Rdv.findById(req.params.rdvId);
-    if (!rdv) {
-      return res.status(404).json({ message: 'Rendez-vous non trouvé' });
+    Rdv.findById(req.params.rdvId).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
+      if (error) {
+        res.status(401);
+        console.log(error);
+        res.json({ message:error });
     }
-    res.status(200).json(rdv);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    else {
+        res.status(200);
+        res.json(rdv);
+    }
+    });
 };
 
 // Contrôleur pour mettre à jour un rendez-vous par son ID
 exports.updateRdv = async (req, res) => {
-  try {
-    const updatedRdv = await Rdv.findByIdAndUpdate(req.params.rdvId, req.body, { new: true });
-    if (!updatedRdv) {
-      return res.status(404).json({ message: 'Rendez-vous non trouvé' });
-    }
-    res.status(200).json(updatedRdv);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  Rdv.findByIdAndUpdate(req.params.rdvId, req.body, { new: true }).populate("users").exec(function(error,rdv){
+    if (error) {
+      res.status(401);
+      console.log(error);
+      res.json({ message:error });
   }
+  else {
+      res.status(200);
+      res.json(rdv);
+  }
+
+  });
+  
 };
 
 // Contrôleur pour supprimer un rendez-vous par son ID
 exports.deleteRdv = async (req, res) => {
-  try {
-    const deletedRdv = await Rdv.findByIdAndRemove(req.params.rdvId);
-    if (!deletedRdv) {
-      return res.status(404).json({ message: 'Rendez-vous non trouvé' });
-    }
-    res.status(204).end();
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  Rdv.deleteOne({ _id: req.params.rdvId }).then(result => res.status(200).json({ message: "Rdz est bien supprimé", result }))
+  .catch((error) => res.status(404).json({ message: "Rdz non trouvé" }))
+  
 };
