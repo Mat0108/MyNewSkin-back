@@ -2,14 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let rdvSchema = new Schema({
-  IdentifiantClient: {
-    type: String,
-    required: true,
-  },
-  IdentifiantExpert: {
-    type: String,
-    required: true,
-  },
   DateDebut: {
     type: Date,
     required: true,
@@ -26,8 +18,15 @@ let rdvSchema = new Schema({
   CompteClient: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  CompteExpert: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   }
 });
 
 module.exports = mongoose.model("Rdv", rdvSchema);
+
+
+
 

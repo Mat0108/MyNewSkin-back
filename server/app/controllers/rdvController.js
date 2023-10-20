@@ -1,14 +1,61 @@
 const Rdv = require("../models/rdvModel"); 
+const User = require('./models/userModel');
+
 
 // Contrôleur pour créer un nouveau rendez-vous
 exports.createRdv = async (req, res) => {
-  try {
-    const newRdv = new Rdv(req.body);
-    const savedRdv = await newRdv.save();
-    res.status(201).json(savedRdv);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+    User.findOne({ email: req.body.organizer }, (error, organizer) => {
+        if (error) {
+            res.status(500);
+            console.log(error);
+            res.json({ message: "Organisateur non trouvé" });
+        } else {
+            if (req.body.participants) {
+                User.find({ email: { $in: req.body.participants } }, (error, participants) => {
+                    if (error) {
+                        res.status(500);
+                        console.log(error);
+                        res.json({ message: "Participants non trouvés" });
+                    } else {
+                        let newRdv = new Rdv({
+                            title: req.body.title,
+                            date: req.body.date,
+                            organizer: organizer._id,
+                            participants: participants.map(e => e._id),
+                        });
+
+                        newRdv.save((error, rdv) => {
+                            if (error) {
+                                res.status(401);
+                                console.log(error);
+                                res.json({ message: "Échec de la création du rendez-vous" });
+                            } else {
+                                res.status(200);
+                                res.json({ message: `Rendez-vous créé : ${rdv.title}`, rdvData: newRdv });
+                            }
+                        });
+                    }
+                });
+            } else {
+                let newRdv = new Rdv({
+                    title: req.body.title,
+                    date: req.body.date,
+                    organizer: organizer._id,
+                });
+
+                newRdv.save((error, rdv) => {
+                    if (error) {
+                        res.status(401);
+                        console.log(error);
+                        res.json({ message: "Échec de la création du rendez-vous" });
+                    } else {
+                        res.status(200);
+                        res.json({ message: `Rendez-vous créé : ${rdv.title}`, rdvData: newRdv });
+                    }
+                });
+            }
+        }
+    });
 };
 
 // Contrôleur pour récupérer tous les rendez-vous
