@@ -31,10 +31,12 @@ app.get("/", (req, res) => {
 const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
 const mailRoute = require("./app/routes/mailRoute");
+const rdvRoute = require("./app/routes/rdvRoute")
 
 userRoute(app);
 blogRoute(app);
-mailRoute(app)
+mailRoute(app);
+rdvRoute(app);
 const PORT = process.env.NODE_DOCKER_PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
