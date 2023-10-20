@@ -7,5 +7,6 @@ module.exports = (server) => {
     server.get("/rdv/get/:rdvId",cors(),rdvController.getRdvById);
     
     server.delete("/rdv/get/:rdvId",cors(),rdvController.deleteRdv);
+    server.get("/rdv/getbyuser/",cors(),rdvController.getRdvbyName);
 
 }

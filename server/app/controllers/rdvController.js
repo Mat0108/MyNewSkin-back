@@ -95,3 +95,27 @@ exports.deleteRdv = async (req, res) => {
   .catch((error) => res.status(404).json({ message: "Rdz non trouvé" }))
   
 };
+
+exports.getRdvbyName = (req,res)=>{
+    User.findOne({ email: req.body.Compte }, (error, Compte) => {
+        if(error || Compte == null){
+            res.status(401);
+            console.log(error);
+            res.json({ message:error });
+        }else{
+            Rdv.find({$or:[{CompteClient:Compte._id},{CompteExpert:Compte._id}]}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
+                if (error) {
+                  res.status(401);
+                  console.log(error);
+                  res.json({ message:error });
+              }
+              else {
+                  res.status(200);
+                  res.json(rdv);
+              }
+            
+              });
+        }
+    })
+   
+}
