@@ -1,5 +1,5 @@
 const Rdv = require("../models/rdvModel"); 
-const User = require('./models/userModel');
+const User = require('../models/userModel');
 
 
 // Contrôleur pour créer un nouveau rendez-vous
