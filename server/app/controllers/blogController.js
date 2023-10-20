@@ -69,3 +69,17 @@ exports.deleteBlog = (req, res) => {
         .then(result => res.status(200).json({ message: "Blog est bien supprimé", result }))
         .catch((error) => res.status(404).json({ message: "Blog non trouvé" }))
 };
+
+exports.searchBlog = (req,res) =>{
+    Blog.find({ "title": { "$regex": req.params.search, "$options": "i" } }, (error, blog) => {
+        if (error) {
+            res.status(401);
+            console.log(error);
+            res.json({ message:error });
+        }
+        else {
+            res.status(200);
+            res.json(blog);
+        }
+    })
+};
