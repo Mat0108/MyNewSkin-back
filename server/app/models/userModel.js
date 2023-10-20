@@ -22,12 +22,12 @@ let userSchema = new Schema({
     connected: {
         type: Boolean,
         required: true,
-        default: 0
+        default: false
     },
     type:{
         type:Boolean,
         required : true,
-        default:0
+        default:false
     }
 });
 
