@@ -5,13 +5,14 @@ const User = require('../models/userModel');
 // Contrôleur pour créer un nouveau rendez-vous
 exports.createRdv = (req, res) => {
     User.findOne({ email: req.body.CompteClient }, (error, CompteClient) => {
-        if (!Object.keys(CompteClient).length && error) {
+        
+        if (error || CompteClient == null) {
             res.status(500);
             console.log(error);
             res.json({ message: "CompteClient non trouvé" });
         } else {
                 User.findOne({ email: { $in: req.body.CompteExpert } }, (error, CompteExpert) => {
-                    if (!Object.keys(CompteExpert).length && error) {
+                    if ( error || CompteExpert == null) {
                         res.status(500);
                         console.log(error);
                         res.json({ message: "CompteExpert non trouvés" });
