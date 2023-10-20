@@ -30,20 +30,6 @@ exports.createRdv = async (req, res) => {
                                 console.log(error);
                                 res.json({ message: "Échec de la création du rendez-vous" });
                             } else {
-                                participants.map(e => {
-                                    let userRdvs = e.rdvs;
-                                    userRdvs.push(rdv._id);
-
-                                    User.findByIdAndUpdate({ _id: e._id }, { rdvs: userRdvs }, { new: true })
-                                        .then(result => console.log('result : ', result))
-                                        .catch((error) => console.log('error : ', error))
-                                })
-
-                                organizer.rdvs.push(rdv._id);
-                                User.findByIdAndUpdate({ _id: organizer._id }, { rdvs: organizer.rdvs }, { new: true })
-                                    .then(result => console.log('result : ', result))
-                                    .catch((error) => console.log('error : ', error))
-
                                 res.status(200);
                                 res.json({ message: `Rendez-vous créé : ${rdv.title}`, rdvData: newRdv });
                             }
