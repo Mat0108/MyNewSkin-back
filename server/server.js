@@ -14,8 +14,6 @@ app.use(cors());
 
 const db = require("./app/models");
 
-console.log(db.url);
-
 db.mongoose.connect(db.url,{ useNewUrlParser: true } )
   .then(() => {
     console.log("Connected to the database!");
@@ -32,9 +30,11 @@ app.get("/", (req, res) => {
 
 const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
+const mailRoute = require("./app/routes/mailRoute");
 
 userRoute(app);
 blogRoute(app);
+mailRoute(app)
 const PORT = process.env.NODE_DOCKER_PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
