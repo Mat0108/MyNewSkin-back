@@ -14,8 +14,6 @@ app.use(cors());
 
 const db = require("./app/models");
 
-console.log(db.url);
-
 db.mongoose.connect(db.url,{ useNewUrlParser: true } )
   .then(() => {
     console.log("Connected to the database!");

@@ -71,11 +71,12 @@ exports.deleteBlog = (req, res) => {
 };
 
 exports.searchBlog = (req,res) =>{
-    Blog.find({ title: { "$regex": new RegExp(req.params.search, 'i')},textpresentation:{ "$regex": new RegExp(req.params.search, 'i')} }, (error, blog) => {
+    console.log(req.params.searchId)
+    Blog.find( { "title": { "$regex": `${req.params.searchId}`, "$options": "i" } }, (error, blog) => {
         if (error) {
             res.status(401);
             console.log(error);
-            res.json({ message:error });
+            res.json({ message:message });
         }
         else {
             res.status(200);
