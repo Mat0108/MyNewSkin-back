@@ -24,14 +24,11 @@ let userSchema = new Schema({
         required: true,
         default: 0
     },
-    groups: [{
-        type: Schema.Types.ObjectId,
-        ref: "Group",
-    }],
-    projects: [{
-        type: Schema.Types.ObjectId,
-        ref: "Project",
-    }]
+    type:{
+        type:Boolean,
+        required : true,
+        default:0
+    }
 });
 
 module.exports = mongoose.model("User", userSchema);
