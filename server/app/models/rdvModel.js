@@ -11,7 +11,7 @@ let rdvSchema = new Schema({
     required: true,
   },
   Confirmation: {
-    type: Number,
+    type: Boolean,
     required: true,
   },
   // On ajoute ici, les références aux utilisateurs (compte client)
