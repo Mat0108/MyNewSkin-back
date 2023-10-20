@@ -27,9 +27,8 @@ exports.createRdv = (req, res) => {
                         newRdv.save((error, rdv) => {
                             if (error) {
                                 res.status(401);
-                                res.json({ message: error });
-
-                                // res.json({ message: "Échec de la création du rendez-vous" });
+                                // res.json({ message: error });
+                                res.json({ message: "Échec de la création du rendez-vous" });
                             } else {
                                 res.status(200);
                                 res.json({ message: `Rendez-vous créé `});
