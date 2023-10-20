@@ -17,8 +17,8 @@ exports.createRdv = (req, res) => {
                         res.json({ message: "CompteExpert non trouvés" });
                     } else {
                         let newRdv = new Rdv({
-                            DateDebut: req.body.DateDebut,
-                            DateFin: req.body.DateFin,
+                            DateDebut: new Date(req.body.DateDebut),
+                            DateFin: new Date(req.body.DateFin),
                             Confirmation:req.body.Confirmation,
                             CompteClient: CompteClient._id,
                             CompteExpert: CompteExpert._id,
@@ -27,8 +27,9 @@ exports.createRdv = (req, res) => {
                         newRdv.save((error, rdv) => {
                             if (error) {
                                 res.status(401);
-                                console.log(error);
-                                res.json({ message: "Échec de la création du rendez-vous" });
+                                res.json({ message: error });
+
+                                // res.json({ message: "Échec de la création du rendez-vous" });
                             } else {
                                 res.status(200);
                                 res.json({ message: `Rendez-vous créé `});
@@ -42,7 +43,7 @@ exports.createRdv = (req, res) => {
 
 // Contrôleur pour récupérer tous les rendez-vous
 exports.getAllRdvs = (req, res) => {
-  Rdv.find({}).populate("users").exec(function(error,rdv){
+  Rdv.find({}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
     if (error) {
       res.status(401);
       console.log(error);
@@ -50,7 +51,7 @@ exports.getAllRdvs = (req, res) => {
   }
   else {
       res.status(200);
-      res.json(rdz);
+      res.json(rdv);
   }
 
   });
@@ -58,7 +59,7 @@ exports.getAllRdvs = (req, res) => {
 
 // Contrôleur pour récupérer un rendez-vous par son ID
 exports.getRdvById = async (req, res) => {
-    Rdv.findById(req.params.rdvId).populate("users").exec(function(error,rdv){
+    Rdv.findById(req.params.rdvId).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
       if (error) {
         res.status(401);
         console.log(error);
@@ -66,7 +67,7 @@ exports.getRdvById = async (req, res) => {
     }
     else {
         res.status(200);
-        res.json(rdz);
+        res.json(rdv);
     }
     });
 };
@@ -81,7 +82,7 @@ exports.updateRdv = async (req, res) => {
   }
   else {
       res.status(200);
-      res.json(rdz);
+      res.json(rdv);
   }
 
   });
