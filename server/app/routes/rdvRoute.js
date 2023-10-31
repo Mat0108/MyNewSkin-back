@@ -5,7 +5,7 @@ module.exports = (server) => {
     server.post("/rdv/set", cors(), rdvController.createRdv);
     server.get("/rdv/",cors(),rdvController.getAllRdvs);
     server.get("/rdv/get/:rdvId",cors(),rdvController.getRdvById);
-    
+    server.put("/rdv/edit/:rdvId",cors(),rdvController.updateRdv);
     server.delete("/rdv/get/:rdvId",cors(),rdvController.deleteRdv);
 
 }
