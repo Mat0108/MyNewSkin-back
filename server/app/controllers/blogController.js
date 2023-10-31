@@ -36,6 +36,20 @@ exports.getBlog = (req, res) => {
         }
     })
 }
+exports.getBlogByField = (req, res) => {
+
+    Blog.find({altimagepresentation:req.params.altId}, (error, blog) => {
+        if (error) {
+            res.status(401);
+            console.log(error);
+            res.json({ message:error });
+        }
+        else {
+            res.status(200);
+            res.json(blog);
+        }
+    })
+}
 
 exports.getAllBlog = (req, res) => {
     Blog.find({}, (error, blog) => {
@@ -54,4 +68,19 @@ exports.deleteBlog = (req, res) => {
     Blog.deleteOne({ _id: req.params.blogId })
         .then(result => res.status(200).json({ message: "Blog est bien supprimé", result }))
         .catch((error) => res.status(404).json({ message: "Blog non trouvé" }))
+};
+
+exports.searchBlog = (req,res) =>{
+    console.log(req.params.searchId)
+    Blog.find( { "title": { "$regex": `${req.params.searchId}`, "$options": "i" } }, (error, blog) => {
+        if (error) {
+            res.status(401);
+            console.log(error);
+            res.json({ message:message });
+        }
+        else {
+            res.status(200);
+            res.json(blog);
+        }
+    })
 };
