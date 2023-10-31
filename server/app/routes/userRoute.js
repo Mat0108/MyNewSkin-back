@@ -1,4 +1,4 @@
-module.exports = (server) => {
+module.exports = (server,corsConfig) => {
     const userController = require("../controllers/userController");
     const cors = require('cors');
 
@@ -32,7 +32,7 @@ module.exports = (server) => {
  *       200:
  *         description: Created user
  */
-server.post("/user/register", cors(), userController.userRegister);
+server.post("/user/register", cors(corsConfig), userController.userRegister);
 
 /**
  * @openapi
@@ -55,7 +55,7 @@ server.post("/user/register", cors(), userController.userRegister);
  *       200:
  *         description: Connection user
  */
-server.post("/user/login", cors(), userController.userLogin);
+server.post("/user/login", cors(corsConfig), userController.userLogin);
 
 /**
  * @openapi
@@ -79,7 +79,7 @@ server.post("/user/login", cors(), userController.userLogin);
  *       200:
  *         description: User disconnection
  */
-server.post("/user/logout/:userId", cors(), userController.userLogout);
+server.post("/user/logout/:userId", cors(corsConfig), userController.userLogout);
 
 /**
  * @openapi
@@ -99,7 +99,7 @@ server.post("/user/logout/:userId", cors(), userController.userLogout);
  *       200:
  *         description: Returns all users
  */
-server.get("/users", cors(), userController.getAllUsers);
+server.get("/users", cors(corsConfig), userController.getAllUsers);
 
 /**
  * @openapi
@@ -120,7 +120,7 @@ server.get("/users", cors(), userController.getAllUsers);
  *         description: Returns user by Id
  */
 server.route("/users/:userId")
-.all(cors())
+.all(cors(corsConfig))
 
 
 .get(userController.getUserById)
