@@ -1,4 +1,4 @@
-module.exports = (server) => {
+module.exports = (server,corsConfig) => {
     const formController = require("../controllers/formController");
     const cors = require('cors');
 
@@ -15,7 +15,7 @@ module.exports = (server) => {
  *       200:
  *         description: Returns a mysterious string.
  */
-server.post("/form/create", cors(), formController.createForm);
+server.post("/form/create", cors(corsConfig), formController.createForm);
 
 /**
  * @openapi
@@ -29,5 +29,5 @@ server.post("/form/create", cors(), formController.createForm);
  *       200:
  *         description: Returns a mysterious string.
  */
-server.get("/form/get", cors(), formController.getFormById);
+server.get("/form/get", cors(corsConfig), formController.getFormById);
 }

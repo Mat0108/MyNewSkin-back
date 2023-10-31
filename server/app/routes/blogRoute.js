@@ -1,12 +1,12 @@
-module.exports = (server) => {
+module.exports = (server,corsConfig) => {
     const blogController = require("../controllers/blogController");
     const cors = require('cors');
 
 
-    server.post("/blog/set", cors(), blogController.setBlog);
-    server.get("/blog/",cors(),blogController.getAllBlog);
-    server.get("/blog/get/id/:blogId",cors(),blogController.getBlog);
-    server.get("/blog/get/alt/:altId",cors(),blogController.getBlogByField);
-    server.get("/blog/get/search/:searchId",cors(),blogController.searchBlog);
-    server.delete("/blog/get/:blogId",cors(),blogController.deleteBlog);
+    server.post("/blog/set", cors(corsConfig), blogController.setBlog);
+    server.get("/blog/",cors(corsConfig),blogController.getAllBlog);
+    server.get("/blog/get/id/:blogId",cors(corsConfig),blogController.getBlog);
+    server.get("/blog/get/alt/:altId",cors(corsConfig),blogController.getBlogByField);
+    server.get("/blog/get/search/:searchId",cors(corsConfig),blogController.searchBlog);
+    server.delete("/blog/get/:blogId",cors(corsConfig),blogController.deleteBlog);
 }

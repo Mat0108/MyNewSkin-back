@@ -10,13 +10,13 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
+var corsOptions = {
+  origin: 'po-skin.fr',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "po-skin.fr"),
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"),
-  next()
-});
+app.use(cors(corsOptions));
+
 
 const db = require("./app/models");
 
@@ -40,10 +40,10 @@ const blogRoute = require("./app/routes/blogRoute");
 const mailRoute = require("./app/routes/mailRoute");
 const rdvRoute = require("./app/routes/rdvRoute")
 
-userRoute(app);
-blogRoute(app);
-mailRoute(app);
-rdvRoute(app);
+userRoute(app,corsOptions);
+blogRoute(app,corsOptions);
+mailRoute(app,corsOptions);
+rdvRoute(app,corsOptions);
 const PORT = process.env.NODE_DOCKER_PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
