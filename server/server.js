@@ -10,11 +10,15 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-var corsOptions = {
-  origin: 'https://po-skin.fr',
+var corsOptionsProd = {
+  origin: 'po-skin.fr',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
-
+var corsOptionsDev = {
+  origin: process.env.DEV_URL,
+  optionsSuccessStatus: 200
+}
+var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : corsOptionsDev
 app.use(cors(corsOptions));
 
 
