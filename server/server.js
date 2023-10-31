@@ -12,6 +12,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "po-skin.fr"),
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"),
+  next()
+});
+
 const db = require("./app/models");
 
 db.mongoose.connect(db.url,{ useNewUrlParser: true } )
@@ -22,6 +28,7 @@ db.mongoose.connect(db.url,{ useNewUrlParser: true } )
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
+  
 
 // simple route
 app.get("/", (req, res) => {
