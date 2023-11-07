@@ -14,23 +14,23 @@ module.exports = (server,corsConfig) => {
      *      - in: body
      *        name: DateDebut
      *        schema:
-     *          type: Date
+     *          type: string
      *      - in: body
      *        name: DateFin
      *        schema:
-     *          type: Date
+     *          type: string
      *      - in: body
      *        name: Confirmation
      *        schema:
-     *          type: Boolean
+     *          type: boolean
      *      - in: body
      *        name: CompteClient
      *        schema:
-     *          type: ObjectId
+     *          type: string
      *      - in: body
      *        name: CompteExpert
      *        schema:
-     *          type: ObjectId
+     *          type: string
      *     responses:
      *       200:
      *         description: Rendez-vous créé 
@@ -64,7 +64,7 @@ module.exports = (server,corsConfig) => {
      *      - in: params
      *        name: rdvId
      *        schema:
-     *          type: ObjectId
+     *          type: string
      *     responses:
      *       200:
      *         description: get one rdv by id 
@@ -82,7 +82,7 @@ module.exports = (server,corsConfig) => {
      *      - in: params
      *        name: rdvId
      *        schema:
-     *          type: ObjectId
+     *          type: string
      *     responses:
      *       200:
      *         description: Rendez-vous créé 
@@ -101,23 +101,23 @@ module.exports = (server,corsConfig) => {
      *      - in: body
      *        name: DateDebut
      *        schema:
-     *          type: Date
+     *          type: string
      *      - in: body
      *        name: DateFin
      *        schema:
-     *          type: Date
+     *          type: string
      *      - in: body
      *        name: Confirmation
      *        schema:
-     *          type: Boolean
+     *          type: boolean
      *      - in: body
      *        name: CompteClient
      *        schema:
-     *          type: ObjectId
+     *          type: string
      *      - in: body
      *        name: CompteExpert
      *        schema:
-     *          type: ObjectId
+     *          type: string
      *     responses:
      *       200:
      *         description: Rendez-vous créé 
