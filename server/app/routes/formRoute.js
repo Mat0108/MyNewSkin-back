@@ -3,31 +3,31 @@ module.exports = (server,corsConfig) => {
     const cors = require('cors');
 
 
-/**
- * @openapi
- * paths:
- *  /form/create:
- *   post:
- *     tags:
- *       - User
- *     description: Welcome to swagger-jsdoc!
- *     responses:
- *       200:
- *         description: Returns a mysterious string.
- */
-server.post("/form/create", cors(corsConfig), formController.createForm);
+    /**
+     * @openapi
+     * paths:
+     *  /form/create:
+     *   post:
+     *     tags:
+     *       - Form
+     *     description: Create a form
+     *     responses:
+     *       200:
+     *         description: Create a form.
+     */
+    server.post("/form/create", cors(corsConfig), formController.createForm);
 
-/**
- * @openapi
- * paths:
- *  /form/get:
- *   post:
- *     tags:
- *       - User
- *     description: Welcome to swagger-jsdoc!
- *     responses:
- *       200:
- *         description: Returns a mysterious string.
- */
+    /**
+     * @openapi
+     * paths:
+     *  /form/get:
+     *   post:
+     *     tags:
+     *       - Form
+     *     description: get All form!
+     *     responses:
+     *       200:
+     *         description: return all from
+     */
 server.get("/form/get", cors(corsConfig), formController.getFormById);
 }
