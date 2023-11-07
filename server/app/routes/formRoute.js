@@ -9,7 +9,7 @@ module.exports = (server,corsConfig) => {
  *  /form/create:
  *   post:
  *     tags:
- *       - User
+ *       - Form
  *     description: Welcome to swagger-jsdoc!
  *     responses:
  *       200:
@@ -23,7 +23,7 @@ server.post("/form/create", cors(corsConfig), formController.createForm);
  *  /form/get:
  *   post:
  *     tags:
- *       - User
+ *       - Form
  *     description: Welcome to swagger-jsdoc!
  *     responses:
  *       200:

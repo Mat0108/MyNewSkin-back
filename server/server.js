@@ -3,6 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose")
 const app = express();
+//SWAGGER (Documentation)
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -22,7 +25,7 @@ var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : corsOptions
 app.use(cors(corsOptions));
 
 
-const db = require("./app/models");
+const db   = require("./app/models");
 
 db.mongoose.connect(db.url,{ useNewUrlParser: true } )
   .then(() => {
@@ -32,7 +35,26 @@ db.mongoose.connect(db.url,{ useNewUrlParser: true } )
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
-  
+const swaggerOptions={
+    definition:{
+        openapi:'3.0.0',
+        info:{
+            title:'Po. Documentation API',
+            version:'1.0.0',
+            description:'Documentation for the Po. project',
+            contact:{
+                name:'Coumba Diankha',
+                email:'coumba.diankha@my-digital-school.org', 
+            },
+            servers:["http://localhost:8080"],
+        },
+        
+    },
+    apis:["./app/routes/*.js"]
+}
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // simple route
 app.get("/", (req, res) => {
