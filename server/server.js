@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var corsOptionsProd = {
-  origin: 'po-skin.fr',
+  origin: process.env.PROD_URL,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 var corsOptionsDev = {
