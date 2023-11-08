@@ -1,24 +1,18 @@
-![alt text](https://github.com/Mat0108/PoSkin/blob/master/Front/public/favicon.ico?raw=true)
-
-## Set the .env with the template
-
-To retrieve the mongo connection information, install the Vault cli (vlt) and follow the commands to retrieve the secrets to put in the env file.
-```bash
-vlt login
-vlt config init
-vlt secrets get -plaintext MONGODB_USER
-vlt secrets get -plaintext MONGODB_PASSWORD
-vlt secrets get -plaintext MONGODB_DATABASE
+![alt text](https://github.com/Mat0108/PoSkin/blob/master/Front/public/images/logobig.png?raw=true)
 
 
-```
+
+## Setup the env file with the template
+Demander à un menbre de la team Po. l'url de connection MongoDB
+    
 ## Launch the app
 We can easily run the whole with only a single command:
+
 ```bash
 docker-compose up
 ```
 
-Docker will pull the MongoDB and Node.js images (if our machine does not have it before).
+Docker will pull Node.js images (if our machine does not have it before).
 
 The services can be run on the background with command:
 ```bash
@@ -28,8 +22,7 @@ docker-compose up -d
 To access the application :
 
 ```bash
-site web : http://localhost:3000 
-mongo-express : http://localhost:8081
+api : http://localhost:8080
 ```
 
 
