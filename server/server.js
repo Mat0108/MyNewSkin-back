@@ -36,7 +36,7 @@ db.mongoose.connect(db.url, { useNewUrlParser: true })
     console.log("Connecté à la base de données!");
   })
   .catch(err => {
-    console.log("Impossible de se connecter à la base de données!", err);
+    console.log("Impossible de se connecter à la base de données!",err);
     process.exit();
   });
 

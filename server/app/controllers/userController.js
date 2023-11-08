@@ -79,7 +79,7 @@ exports.userLogin = (req, res, error) => {
                     }
                     else {
                         if (!user.connected) {
-                            user.connected = 1;
+                            user.connected = true;
 
                             user.save((error, user) => {
                                 if (error) {
@@ -94,22 +94,22 @@ exports.userLogin = (req, res, error) => {
                                         lastname: user.lastname,
                                         email: user.email,
                                         admin: user.admin,
-                                        connected: 1,
-                                        groups: user.groups,
-                                        projects: user.projects
+                                        connected: true,
                                     }
-
-                                    jwt.sign(userData, process.env.JWT_KEY, { expiresIn: "30 days" }, (error, token) => {
-                                        if (error) {
-                                            res.status(500);
-                                            console.log(error);
-                                            res.json({ message: "Impossible de générer le token" })
-                                        }
-                                        else {
-                                            res.status(200);
-                                            res.json({ message: `Utilisateur connecté : ${user.email}`, token, user: userData });
-                                        }
-                                    });
+                                    res.status(200);
+                                    res.json({ message: `Utilisateur connecté : ${user.email}` });
+                                    
+                                    // jwt.sign(userData, process.env.JWT_KEY, { expiresIn: "30 days" }, (error, token) => {
+                                    //     if (error) {
+                                    //         res.status(500);
+                                    //         console.log(error);
+                                    //         res.json({ message: "Impossible de générer le token" })
+                                    //     }
+                                    //     else {
+                                    //         res.status(200);
+                                    //         res.json({ message: `Utilisateur connecté : ${user.email}`, token, user: userData });
+                                    //     }
+                                    // });
                                 }
                             });
                         }
@@ -141,7 +141,7 @@ exports.userLogout = (req, res, error) => {
             }
             else {
                 if (user.connected) {
-                    user.connected = 0;
+                    user.connected = false;
 
                     user.save((error, user) => {
                         if (error) {

@@ -25,9 +25,9 @@ let userSchema = new Schema({
         default: false
     },
     type:{
-        type:Boolean,
+        type:Number,
         required : true,
-        default:false
+        default:0
     }
 });
 

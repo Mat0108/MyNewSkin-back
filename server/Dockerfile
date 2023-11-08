@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:21-alpine3.17 as node
 
 USER root
 
