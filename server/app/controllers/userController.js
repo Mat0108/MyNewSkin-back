@@ -255,3 +255,72 @@ exports.patchUser = (req, res) => {
       .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
 };
   
+// Fonction pour demander la réinitialisation du mot de passe
+exports.demandeReinitialisationMotDePasse = (req, res) => {
+  const { email } = req.body;
+
+  User.findOne({ email }, (error, user) => {
+    if (error || !user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // Token expirera après 1 heure
+
+    user.save((error, user) => {
+      if (error) {
+        return res.status(500).json({ message: "Erreur serveur", error });
+      }
+
+      const mailOptions = {
+        from: "votreadresse@gmail.com",
+        to: user.email,
+        subject: "Réinitialisation du mot de passe",
+        html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="https://votresite.com/reset-password/${resetToken}">Réinitialiser le mot de passe</a>`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
+        }
+
+        console.log("E-mail de réinitialisation envoyé : " + info.response);
+        res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
+      });
+    });
+  });
+};
+
+// Fonction pour réinitialiser le mot de passe
+exports.reinitialiserMotDePasse = (req, res) => {
+  const { resetToken, newPassword } = req.body;
+
+  User.findOne({
+    resetPasswordToken: resetToken,
+    resetPasswordExpires: { $gt: Date.now() }, // Vérifie si le token n'a pas expiré
+  }, (error, user) => {
+    if (error || !user) {
+      return res.status(400).json({ message: "Token invalide ou expiré" });
+    }
+
+    bcrypt.hash(newPassword, 10, (error, hash) => {
+      if (error) {
+        return res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+      }
+
+      user.password = hash;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+
+      user.save((error, user) => {
+        if (error) {
+          return res.status(500).json({ message: "Erreur serveur", error });
+        }
+
+        res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });
+      });
+    });
+  });
+};
