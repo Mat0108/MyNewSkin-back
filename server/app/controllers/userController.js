@@ -2,18 +2,10 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { ErrorMessage } = require("./Message");
+const { transporter } = require("../config/config");
 
 // Configurez Nodemailer pour l'envoi d'e-mails
-const transporter = nodemailer.createTransport({
-  host: 'ex5.mail.ovh.net.',
-  port: 587, 
-  secure:false,
-  auth: {
-      user: process.env.OUTLOOK_MAIL,
-      pass: process.env.OUTLOOK_PASS
-  },
 
-});
 
 // Inscription d'utilisateur
 exports.userRegister = (req, res, error) => {
@@ -108,7 +100,7 @@ exports.userLogin = (req, res) => {
                                         connected: true,
                                     }
                                     res.status(200);
-                                    res.json({ message: `Utilisateur connecté : ${user.email}` ,data:user});
+                                    res.json({ message: `Utilisateur connecté : ${user.email}` ,user});
                                     
                                     // jwt.sign(userData, process.env.JWT_KEY, { expiresIn: "30 days" }, (error, token) => {
                                     //     if (error) {
@@ -261,7 +253,9 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
 
   User.findOne({ email }, (error, user) => {
     if (error || !user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+      res.status(404)
+      ErrorMessage(res,error,"Utilisateur non trouvé");
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
@@ -270,7 +264,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
 
     user.save((error, user) => {
       if (error) {
-        return res.status(500).json({ message: "Erreur serveur", error });
+        res.status(500).json({ message: "Erreur serveur", error });
       }
 
       const mailOptions = {
@@ -283,7 +277,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.log(error);
-          return res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
+          res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
         }
 
         console.log("E-mail de réinitialisation envoyé : " + info.response);
@@ -302,12 +296,13 @@ exports.reinitialiserMotDePasse = (req, res) => {
     resetPasswordExpires: { $gt: Date.now() }, // Vérifie si le token n'a pas expiré
   }, (error, user) => {
     if (error || !user) {
-      return res.status(400).json({ message: "Token invalide ou expiré" });
+      res.status(400)
+      ErrorMessage(res,error,"Token invalide ou expiré")
     }
 
     bcrypt.hash(newPassword, 10, (error, hash) => {
       if (error) {
-        return res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+        res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
       }
 
       user.password = hash;
@@ -316,7 +311,7 @@ exports.reinitialiserMotDePasse = (req, res) => {
 
       user.save((error, user) => {
         if (error) {
-          return res.status(500).json({ message: "Erreur serveur", error });
+          res.status(500).json({ message: "Erreur serveur", error });
         }
 
         res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });

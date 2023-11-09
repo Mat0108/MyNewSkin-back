@@ -222,4 +222,9 @@ server.route("/users/:userId")
  *         description: Return a succes message
  */
 .patch(userController.patchUser);
+
+
+
+server.post("/user/forgetpassword", cors(corsConfig), userController.demandeReinitialisationMotDePasse);
 }
+
