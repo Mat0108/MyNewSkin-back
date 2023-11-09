@@ -48,6 +48,7 @@ services:
     env_file: .env
     ports:
       - $NODE_PORT:$NODE_PORT
+      - 587:587
     # variable d'environment pour permettre de confirgurer l'acces du server à mongo
     environment:
       - MONGODB_URL=$MONGODB_URL

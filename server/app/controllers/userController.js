@@ -1,14 +1,18 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const { ErrorMessage } = require("./Message");
 
 // Configurez Nodemailer pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  host: 'ex5.mail.ovh.net.',
+  port: 587, 
+  secure:false,
   auth: {
-    user: "votreadresse@gmail.com",
-    pass: "votremotdepasse",
+      user: process.env.OUTLOOK_MAIL,
+      pass: process.env.OUTLOOK_PASS
   },
+
 });
 
 // Inscription d'utilisateur
@@ -29,11 +33,13 @@ exports.userRegister = (req, res, error) => {
           if (error) {
             res.status(401);
             console.log(error);
+            ErrorMessage(res,error,"Requête invalide")
+          
             res.json({ message: "Requête invalide" });
           } else {
             // Envoi de l'e-mail de confirmation
             const mailOptions = {
-              from: "votreadresse@gmail.com", // Adresse de l'expéditeur
+              from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
               to: user.email, // Adresse du destinataire
               subject: "Confirmation d'inscription",
               html: `Bienvenue sur notre site ! Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://votresite.com/activate/${user._id}">Activer le compte</a>`,
@@ -48,7 +54,7 @@ exports.userRegister = (req, res, error) => {
             });
 
             res.status(200);
-            res.json({ message: `Utilisateur créé : ${user.email}` });
+            res.json({ message: `Utilisateur créé : ${user.email}` ,data:user});
           }
         });
       }
@@ -62,7 +68,7 @@ exports.userRegister = (req, res, error) => {
 
 
 // Connexion d'utilisateur
-exports.userLogin = (req, res, error) => {
+exports.userLogin = (req, res) => {
     User.findOne({ email: req.body.email }, (error, user) => {
         if (error) {
             res.status(500);
@@ -75,7 +81,10 @@ exports.userLogin = (req, res, error) => {
                     if (error) {
                         res.status(401);
                         console.log(error);
-                        res.json({ message: "Mot de passe incorrect" })
+                        
+                        res.json({ message: error })
+                        // res.json({ message: "Mot de passe incorrect" })
+
                     }
                     else {
                         if (!user.connected) {
@@ -85,6 +94,8 @@ exports.userLogin = (req, res, error) => {
                                 if (error) {
                                     res.status(401);
                                     console.log(error);
+                                    
+                                    res.json({ message: error })
                                     res.json({ message: "Rêquete invalide" });
                                 }
                                 else {
@@ -97,7 +108,7 @@ exports.userLogin = (req, res, error) => {
                                         connected: true,
                                     }
                                     res.status(200);
-                                    res.json({ message: `Utilisateur connecté : ${user.email}` });
+                                    res.json({ message: `Utilisateur connecté : ${user.email}` ,data:user});
                                     
                                     // jwt.sign(userData, process.env.JWT_KEY, { expiresIn: "30 days" }, (error, token) => {
                                     //     if (error) {
@@ -116,14 +127,18 @@ exports.userLogin = (req, res, error) => {
                         else {
                             res.status(401);
                             console.log(error);
-                            res.json({ message: "Utilisateur est déjà connecté" });
+                            
+                            res.json({ message: error })
+                            // res.json({ message: "Utilisateur est déjà connecté" });
                         }
                     }
                 })
             }
             else {
                 res.status(401);
-                res.json({ message: "Email ou mot de passe incorrect" });
+                
+                res.json({ message: error })
+                // res.json({ message: "Email ou mot de passe incorrect" });
                 console.log(error);
             }
         }

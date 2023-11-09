@@ -24,6 +24,10 @@ let userSchema = new Schema({
         required: true,
         default: false
     },
+    confirmed:{
+      type:Boolean,
+      default:false  
+    },
     type:{
         type:Number,
         required : true,
