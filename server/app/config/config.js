@@ -6,13 +6,3 @@ exports.ErrorMessage = (res,error,message)=>{
         return res.json(error)
     }
 }
-exports.transporter = nodemailer.createTransport({
-    host: 'ex5.mail.ovh.net.',
-    port: 587, 
-    secure:false,
-    auth: {
-        user: process.env.OUTLOOK_MAIL,
-        pass: process.env.OUTLOOK_PASS
-    },
-  
-  });

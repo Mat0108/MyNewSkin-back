@@ -2,10 +2,18 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { ErrorMessage } = require("./Message");
-const { transporter } = require("../config/config");
 
 // Configurez Nodemailer pour l'envoi d'e-mails
+const transporter = nodemailer.createTransport({
+  host: 'ex5.mail.ovh.net.',
+  port: 587, 
+  secure:false,
+  auth: {
+      user: process.env.OUTLOOK_MAIL,
+      pass: process.env.OUTLOOK_PASS
+  },
 
+});
 
 // Inscription d'utilisateur
 exports.userRegister = (req, res, error) => {
@@ -255,10 +263,11 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
     if (error || !user) {
 
       res.status(404)
+      console.log(error)
       ErrorMessage(res,error,"Utilisateur non trouvé");
     }
 
-    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetToken = require('crypto').randomBytes(20).toString("hex");
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = Date.now() + 3600000; // Token expirera après 1 heure
 
@@ -268,7 +277,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
       }
 
       const mailOptions = {
-        from: "votreadresse@gmail.com",
+        from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
         to: user.email,
         subject: "Réinitialisation du mot de passe",
         html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="https://votresite.com/reset-password/${resetToken}">Réinitialiser le mot de passe</a>`,
@@ -280,7 +289,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
           res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
         }
 
-        console.log("E-mail de réinitialisation envoyé : " + info.response);
+        console.log("E-mail de réinitialisation envoyé : " + info);
         res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
       });
     });
