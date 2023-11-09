@@ -26,7 +26,7 @@ var corsOptionsDev = {
   origin: process.env.DEV_URL,
   optionsSuccessStatus: 200
 }
-var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : corsOptionsDev
+var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : null
 app.use(cors(corsOptions));
 
 // Connexion à la base de données MongoDB via Mongoose
