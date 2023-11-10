@@ -188,7 +188,7 @@ exports.userLogout = (req, res, error) => {
 
 // Afficher tous les utilisateurs
 exports.getAllUsers = (req, res) => {
-    User.find({}).populate("groups").populate("projects").exec(function (error, users) {
+    User.find({}).exec(function (error, users) {
         if (error) {
             res.status(500);
             console.log(error);
@@ -204,7 +204,7 @@ exports.getAllUsers = (req, res) => {
 
 // Afficher un utilisateur par id
 exports.getUserById = (req, res) => {
-    User.findById(req.params.userId).populate("groups").populate("projects").exec(function (error, user) {
+    User.findById(req.params.userId).exec(function (error, user) {
         if (error) {
             res.status(401);
             res.json({ message: "Utilisateur connecté non trouvé" });
@@ -296,35 +296,51 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
   });
 };
 
+exports.checkToken = (req,res)=>{
+  User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
+    if(error || !user){
+      res.status(400)
+      ErrorMessage(res,error,"Utilisateur non trouvé")
+    }else {
+      if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
+        res.status(200).json({message: "Token valide",status:true });
+      }else{
+        res.status(200).json({message: "Token invalide",status:false});
+      }
+      }
+  })
+}
 // Fonction pour réinitialiser le mot de passe
 exports.reinitialiserMotDePasse = (req, res) => {
   const { resetToken, newPassword } = req.body;
-
-  User.findOne({
-    resetPasswordToken: resetToken,
-    resetPasswordExpires: { $gt: Date.now() }, // Vérifie si le token n'a pas expiré
-  }, (error, user) => {
-    if (error || !user) {
+  User.findOne({resetPasswordToken:resetToken},(error, user) => {
+    if(error || !user){
       res.status(400)
-      ErrorMessage(res,error,"Token invalide ou expiré")
-    }
-
-    bcrypt.hash(newPassword, 10, (error, hash) => {
-      if (error) {
-        res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+      ErrorMessage(res,error,"Utilisateur non trouvé")
+    }else {
+      if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
+        bcrypt.hash(newPassword, 10, (error, hash) => {
+          if (error) {
+            res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+          }
+    
+          user.password = hash;
+          user.resetPasswordToken = undefined;
+          user.resetPasswordExpires = undefined;
+    
+          user.save((error, user) => {
+            if (error) {
+              res.status(500).json({ message: "Erreur serveur", error });
+            }
+    
+            res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });
+          });
+        });  
+      
+      }else{
+        res.status(200).json({message: "Token invalide",status:false});
       }
-
-      user.password = hash;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-
-      user.save((error, user) => {
-        if (error) {
-          res.status(500).json({ message: "Erreur serveur", error });
-        }
-
-        res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });
-      });
-    });
-  });
+      }
+  })
+  
 };

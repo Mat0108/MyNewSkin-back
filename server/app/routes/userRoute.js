@@ -224,7 +224,8 @@ server.route("/users/:userId")
 .patch(userController.patchUser);
 
 
-
 server.post("/user/forgetpassword", cors(corsConfig), userController.demandeReinitialisationMotDePasse);
+server.post("/user/validatetoken",cors(corsConfig),userController.checkToken);
+server.post("/user/editpassword",cors(corsConfig),userController.reinitialiserMotDePasse)
 }
 
