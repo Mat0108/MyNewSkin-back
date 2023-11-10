@@ -1,4 +1,4 @@
-FROM node:latest as node
+FROM node:21-alpine3.17 as node
 
 USER root
 
@@ -10,8 +10,8 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8080:8080
+EXPOSE 8080
 
-EXPOSE 587:587
+EXPOSE 587
 
 CMD ["npm", "start"]
