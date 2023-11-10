@@ -280,7 +280,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
         from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
         to: user.email,
         subject: "Réinitialisation du mot de passe",
-        html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="https://votresite.com/reset-password/${resetToken}">Réinitialiser le mot de passe</a>`,
+        html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="http://localhost:3000/ForgotPassword/${resetToken}">Réinitialiser le mot de passe</a>`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -298,12 +298,11 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
 
 exports.checkToken = (req,res)=>{
   User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
-    if(error || !user){
-      res.status(400)
-      ErrorMessage(res,error,"Utilisateur non trouvé")
+    if(error || !user){ 
+      res.status(200).json({message: "Token invalide",status:false});
     }else {
       if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
-        res.status(200).json({message: "Token valide",status:true });
+        res.status(200).json({message: "Token valide",status:true,id:user._id});
       }else{
         res.status(200).json({message: "Token invalide",status:false});
       }
@@ -312,29 +311,24 @@ exports.checkToken = (req,res)=>{
 }
 // Fonction pour réinitialiser le mot de passe
 exports.reinitialiserMotDePasse = (req, res) => {
-  const { resetToken, newPassword } = req.body;
-  User.findOne({resetPasswordToken:resetToken},(error, user) => {
+  User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
     if(error || !user){
       res.status(400)
       ErrorMessage(res,error,"Utilisateur non trouvé")
     }else {
       if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
-        bcrypt.hash(newPassword, 10, (error, hash) => {
+        bcrypt.hash(req.body.newPassword, 10, (error, hash) => {
           if (error) {
             res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
           }
-    
-          user.password = hash;
-          user.resetPasswordToken = undefined;
-          user.resetPasswordExpires = undefined;
-    
-          user.save((error, user) => {
-            if (error) {
-              res.status(500).json({ message: "Erreur serveur", error });
+          User.findOneAndUpdate({resetPasswordToken:req.body.resetToken},{password:hash,resetPasswordToken:null,resetPasswordExpires:null},{ new: true })
+          .then(user => {
+            if (!user) {
+              return res.status(404).json({ message: "Utilisateur non trouvé" });
             }
-    
-            res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });
-          });
+            res.status(200).json({ message: "Utilisateur est bien mis à jour", status:true });
+          })
+          .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
         });  
       
       }else{

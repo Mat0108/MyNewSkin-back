@@ -2,36 +2,26 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let formModel = new Schema({
-    sexe: {
-        type: String
-    },
-    préoccupation : {
-        type: Array
-    },
-    produits_utilisé:{
-        type: Array
-    },
-    reaction_de_la_peau: {
-        type: Array
-    },
-    environnement: {
-        type: Number,
-        default: 0
-    },
-    fumer: {
-        type: Number,
-        default: 0
-    },
-    couleur_de_peau:{
+    question1: [{
         type: Number
-    },
-    freq_expo_soleil:{
+    }],
+    question2: [{
         type: Number
-    },
-    protection_solaire:{
+    }],
+    question3: [{
         type: Number
-    },
+    }],
+    question4: [{
+        type: Number
+    }],
+    question5: [{
+        type: Number
+    }],
+    mail:{
+        type:String
+    }
+    
 
 });
 
-module.exports = mongoose.model("Form", userSchema);
+module.exports = mongoose.model("Form", formModel);

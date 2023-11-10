@@ -103,11 +103,12 @@ const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
 const mailRoute = require("./app/routes/mailRoute");
 const rdvRoute = require("./app/routes/rdvRoute");
-
+const formRoute = require("./app/routes/formRoute")
 userRoute(app, corsOptions);
 blogRoute(app, corsOptions);
 mailRoute(app, corsOptions);
 rdvRoute(app, corsOptions);
+formRoute(app,corsOptions)
 
 // Ajoutez une route pour gérer la connexion (authentification)
 app.post('/login',
