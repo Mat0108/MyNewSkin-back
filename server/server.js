@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
+const LocalStrategy = require('passport-local').Strategy;
 const app = express();
 
 // Import de la documentation Swagger
@@ -61,9 +61,6 @@ const swaggerOptions = {
 // Génération de la spécification Swagger
 const swaggerSpec = swaggerJSDoc(swaggerOptions)
 
-// Middleware pour la gestion de sessions
-app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
-
 // Configurez Passport pour l'authentification
 passport.use(new LocalStrategy(
   (username, password, done) => {
@@ -86,9 +83,13 @@ passport.deserializeUser((username, done) => {
   done(null, { username });
 });
 
+
+// Middleware pour la gestion de sessions
+app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
 // Utilisez Passport comme middleware d'authentification
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // Serveur Swagger à l'URL "/api-docs"
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -103,11 +104,12 @@ const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
 const mailRoute = require("./app/routes/mailRoute");
 const rdvRoute = require("./app/routes/rdvRoute");
-
+const formRoute = require("./app/routes/formRoute")
 userRoute(app, corsOptions);
 blogRoute(app, corsOptions);
 mailRoute(app, corsOptions);
 rdvRoute(app, corsOptions);
+formRoute(app,corsOptions)
 
 // Ajoutez une route pour gérer la connexion (authentification)
 app.post('/login',

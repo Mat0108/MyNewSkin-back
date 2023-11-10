@@ -2,6 +2,32 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { ErrorMessage } = require("./Message");
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+
+// ////////////////////////////////////////////////////////////////////
+// passport.use(new GoogleStrategy({
+//   clientID: 'YOUR_GOOGLE_CLIENT_ID',
+//   clientSecret: 'YOUR_GOOGLE_CLIENT_SECRET',
+//   callbackURL: '/auth/google/callback',
+// },
+// (accessToken, refreshToken, profile, done) => {
+//   // Votre logique pour créer ou récupérer un utilisateur dans la base de données
+//   // Utilisez profile.id comme identifiant unique, par exemple.
+//   return done(null, profile);
+// }));
+
+// // Sérialiser et désérialiser l'utilisateur dans la session
+// passport.serializeUser((user, done) => {
+//   done(null, user);
+// });
+
+// passport.deserializeUser((obj, done) => {
+//   done(null, obj);
+// });
+/////////////////////////////////////////////////////////////////
+
 
 // Configurez Nodemailer pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
@@ -188,7 +214,7 @@ exports.userLogout = (req, res, error) => {
 
 // Afficher tous les utilisateurs
 exports.getAllUsers = (req, res) => {
-    User.find({}).populate("groups").populate("projects").exec(function (error, users) {
+    User.find({}).exec(function (error, users) {
         if (error) {
             res.status(500);
             console.log(error);
@@ -204,7 +230,7 @@ exports.getAllUsers = (req, res) => {
 
 // Afficher un utilisateur par id
 exports.getUserById = (req, res) => {
-    User.findById(req.params.userId).populate("groups").populate("projects").exec(function (error, user) {
+    User.findById(req.params.userId).exec(function (error, user) {
         if (error) {
             res.status(401);
             res.json({ message: "Utilisateur connecté non trouvé" });
@@ -280,7 +306,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
         from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
         to: user.email,
         subject: "Réinitialisation du mot de passe",
-        html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="https://votresite.com/reset-password/${resetToken}">Réinitialiser le mot de passe</a>`,
+        html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="http://localhost:3000/ForgotPassword/${resetToken}">Réinitialiser le mot de passe</a>`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -296,35 +322,45 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
   });
 };
 
+exports.checkToken = (req,res)=>{
+  User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
+    if(error || !user){ 
+      res.status(200).json({message: "Token invalide",status:false});
+    }else {
+      if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
+        res.status(200).json({message: "Token valide",status:true,id:user._id});
+      }else{
+        res.status(200).json({message: "Token invalide",status:false});
+      }
+      }
+  })
+}
 // Fonction pour réinitialiser le mot de passe
 exports.reinitialiserMotDePasse = (req, res) => {
-  const { resetToken, newPassword } = req.body;
-
-  User.findOne({
-    resetPasswordToken: resetToken,
-    resetPasswordExpires: { $gt: Date.now() }, // Vérifie si le token n'a pas expiré
-  }, (error, user) => {
-    if (error || !user) {
+  User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
+    if(error || !user){
       res.status(400)
-      ErrorMessage(res,error,"Token invalide ou expiré")
-    }
-
-    bcrypt.hash(newPassword, 10, (error, hash) => {
-      if (error) {
-        res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+      ErrorMessage(res,error,"Utilisateur non trouvé")
+    }else {
+      if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
+        bcrypt.hash(req.body.newPassword, 10, (error, hash) => {
+          if (error) {
+            res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+          }
+          User.findOneAndUpdate({resetPasswordToken:req.body.resetToken},{password:hash,resetPasswordToken:null,resetPasswordExpires:null},{ new: true })
+          .then(user => {
+            if (!user) {
+              return res.status(404).json({ message: "Utilisateur non trouvé" });
+            }
+            res.status(200).json({ message: "Utilisateur est bien mis à jour", status:true });
+          })
+          .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+        });  
+      
+      }else{
+        res.status(200).json({message: "Token invalide",status:false});
       }
-
-      user.password = hash;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-
-      user.save((error, user) => {
-        if (error) {
-          res.status(500).json({ message: "Erreur serveur", error });
-        }
-
-        res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });
-      });
-    });
-  });
+      }
+  })
+  
 };
