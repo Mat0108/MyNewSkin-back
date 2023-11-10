@@ -2,6 +2,32 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { ErrorMessage } = require("./Message");
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+
+// ////////////////////////////////////////////////////////////////////
+// passport.use(new GoogleStrategy({
+//   clientID: 'YOUR_GOOGLE_CLIENT_ID',
+//   clientSecret: 'YOUR_GOOGLE_CLIENT_SECRET',
+//   callbackURL: '/auth/google/callback',
+// },
+// (accessToken, refreshToken, profile, done) => {
+//   // Votre logique pour créer ou récupérer un utilisateur dans la base de données
+//   // Utilisez profile.id comme identifiant unique, par exemple.
+//   return done(null, profile);
+// }));
+
+// // Sérialiser et désérialiser l'utilisateur dans la session
+// passport.serializeUser((user, done) => {
+//   done(null, user);
+// });
+
+// passport.deserializeUser((obj, done) => {
+//   done(null, obj);
+// });
+/////////////////////////////////////////////////////////////////
+
 
 // Configurez Nodemailer pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({

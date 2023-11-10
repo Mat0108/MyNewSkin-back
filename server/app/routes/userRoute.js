@@ -1,6 +1,9 @@
 module.exports = (server,corsConfig) => {
     const userController = require("../controllers/userController");
     const cors = require('cors');
+    const express = require('express');
+    const passport = require('passport');
+    const router = express.Router();
 
 
 /**

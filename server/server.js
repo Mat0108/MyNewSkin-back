@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const passport = require('passport');
+const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const app = express();
@@ -61,9 +62,6 @@ const swaggerOptions = {
 // Génération de la spécification Swagger
 const swaggerSpec = swaggerJSDoc(swaggerOptions)
 
-// Middleware pour la gestion de sessions
-app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
-
 // Configurez Passport pour l'authentification
 passport.use(new LocalStrategy(
   (username, password, done) => {
@@ -86,9 +84,13 @@ passport.deserializeUser((username, done) => {
   done(null, { username });
 });
 
+
+// Middleware pour la gestion de sessions
+app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
 // Utilisez Passport comme middleware d'authentification
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // Serveur Swagger à l'URL "/api-docs"
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
