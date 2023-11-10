@@ -19,15 +19,25 @@ let userSchema = new Schema({
         type: String,
         required: true
     },
-    connected: {
+    connected: {
         type: Boolean,
         required: true,
         default: false
     },
-    type:{
-        type:Boolean,
-        required : true,
-        default:false
+    confirmed: {
+        type: Boolean,
+        default: false
+    },
+    type: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    resetPasswordToken: {
+        type: String,
+    },
+    resetPasswordExpires: {
+        type: Date,
     }
 });
 

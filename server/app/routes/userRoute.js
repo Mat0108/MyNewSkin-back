@@ -1,6 +1,9 @@
 module.exports = (server,corsConfig) => {
     const userController = require("../controllers/userController");
     const cors = require('cors');
+    const express = require('express');
+    const passport = require('passport');
+    const router = express.Router();
 
 
 /**
@@ -222,4 +225,10 @@ server.route("/users/:userId")
  *         description: Return a succes message
  */
 .patch(userController.patchUser);
+
+
+server.post("/user/forgetpassword", cors(corsConfig), userController.demandeReinitialisationMotDePasse);
+server.post("/user/validatetoken",cors(corsConfig),userController.checkToken);
+server.post("/user/editpassword",cors(corsConfig),userController.reinitialiserMotDePasse)
 }
+

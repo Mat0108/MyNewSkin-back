@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:latest as node
 
 USER root
 
@@ -11,5 +11,7 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
+
+EXPOSE 587
 
 CMD ["npm", "start"]
