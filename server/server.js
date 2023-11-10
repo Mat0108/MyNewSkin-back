@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session');
 const app = express();
 
 // Import de la documentation Swagger
