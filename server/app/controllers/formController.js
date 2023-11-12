@@ -46,13 +46,13 @@ exports.createForm = (req, res) => {
   
               transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                  console.log(error);
+                    res.status(500);
+                    res.json({ message: `Error mail` });
                 } else {
-                  console.log("E-mail de confirmation envoyé : " + info.response);
+                    res.status(200);
+                    res.json({ message: `Form sauvegardé` });
                 }
               });
-            res.status(200);
-            res.json({ message: `Form sauvegardé` });
         }})
 }
 
