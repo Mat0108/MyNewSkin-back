@@ -1,7 +1,7 @@
 const Form = require("../models/formModel");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { DiagnosticData } = require("./Message");
+const { DiagnosticData, ErrorMessage } = require("./Message");
 
 const transporter = nodemailer.createTransport({
     host: 'ex5.mail.ovh.net.',
@@ -43,16 +43,16 @@ exports.createForm = (req, res) => {
                 subject: "Votre diagnostic",
                 html: html
               };
-  
+
               transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    res.status(500);
-                    res.json({ message: `Error mail` });
-                } else {
-                    res.status(200);
-                    res.json({ message: `Form sauvegardé` });
-                }
-              });
+                if (error){
+                    console.log(error);
+                    res.json({message: 'error'});
+                    res.sendStatus(500);
+                }else{
+                    console.log('Message sent: ' + info.response);
+                    res.status(200).json({"message": "votre diagnostic a bien été envoyé par mail"})
+                };});
         }})
 }
 

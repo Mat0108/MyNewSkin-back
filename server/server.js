@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-
+let version = "1.6.0"
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configuration des options CORS en fonction de l'environnement
 var corsOptionsProd = {
-  origin: process.env.PROD_URL,
+  origin: `https://po-skin.fr`,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 var corsOptionsDev = {
@@ -46,7 +46,7 @@ const swaggerOptions = {
     openapi: '3.0.0',
     info: {
       title: 'Po. Documentation API',
-      version: '1.0.0',
+      version: version,
       description: 'Documentation pour le projet Po.',
       contact: {
         name: 'Coumba Diankha',
@@ -96,7 +96,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Route simple pour la page d'accueil
 app.get("/", (req, res) => {
-  res.json({ message: "Bienvenue sur l'application Po." });
+  res.json({ message: `Bienvenue sur l'application Po. Version : ${version}` });
 });
 
 // Import et configuration des routes de l'application
