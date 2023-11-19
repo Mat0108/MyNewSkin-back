@@ -28,7 +28,6 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // });
 /////////////////////////////////////////////////////////////////
 
-
 // Configurez Nodemailer pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
   host: 'ex5.mail.ovh.net.',
@@ -151,11 +150,9 @@ exports.userLogin = (req, res) => {
                             });
                         }
                         else {
-                            res.status(401);
+                            res.status(200);
                             console.log(error);
-                            
-                            res.json({ message: error })
-                            // res.json({ message: "Utilisateur est déjà connecté" });
+                            res.json({ message: "Utilisateur est déjà connecté" ,user});
                         }
                     }
                 })
@@ -165,8 +162,7 @@ exports.userLogin = (req, res) => {
                 
                 res.json({ message: error })
                 // res.json({ message: "Email ou mot de passe incorrect" });
-                console.log(error);
-            }
+                }
         }
     })
 }
