@@ -17,7 +17,7 @@ exports.createRdv = (req, res) => {
             const selectedEndTime = new Date(selectedDate);
             selectedEndTime.setMinutes(selectedEndTime.getMinutes() + 20);
             // Recherche du compte expert associé à l'adresse e-mail sélectionnée
-            User.findOne({ email: { $in: selectedExpert } }, (error, CompteExpert) => {
+            User.findOne({ email: req.body.CompteExpert }, (error, CompteExpert) => {
                 if (error || CompteExpert == null) {
                     res.status(500);
                     console.log(error);
@@ -84,7 +84,7 @@ exports.getRdvById = async (req, res) => {
 
 // Contrôleur pour mettre à jour un rendez-vous par son ID
 exports.updateRdv = async (req, res) => {
-  Rdv.findByIdAndUpdate(req.params.rdvId, req.body, { new: true }).populate("users").exec(function(error,rdv){
+  Rdv.findByIdAndUpdate(req.params.rdvId, req.body, { new: true }).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
     if (error) {
       res.status(401);
       console.log(error);
@@ -107,13 +107,13 @@ exports.deleteRdv = async (req, res) => {
 };
 
 exports.getRdvbyName = (req,res)=>{
-    User.findOne({ email: req.body.Compte }, (error, Compte) => {
+    User.find({ email: req.body.Compte }, (error, Compte) => {
         if(error || Compte == null){
             res.status(401);
             console.log(error);
             res.json({ message:error });
         }else{
-            Rdv.find({$or:[{CompteClient:Compte._id},{CompteExpert:Compte._id}]}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
+            Rdv.find({$or:[{CompteClient:Compte},{CompteExpert:Compte}]}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
                 if (error) {
                   res.status(401);
                   console.log(error);
@@ -128,4 +128,21 @@ exports.getRdvbyName = (req,res)=>{
         }
     })
    
+}
+exports.getRdvByNameAndDate = (req,res)=>{
+    let date = new Date(req.body.Date);
+    date.setDate(date.getDate()+1)
+    
+    Rdv.find({DateDebut:{$gte:new Date(req.body.Date),$lt:date}}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
+        if (error) {
+            res.status(401);
+            console.log(error);
+            res.json({ message:error });
+        }
+        else {
+            res.status(200);
+            res.json(rdv);
+        }
+    
+    });
 }

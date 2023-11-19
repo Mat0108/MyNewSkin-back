@@ -360,3 +360,13 @@ exports.reinitialiserMotDePasse = (req, res) => {
   })
   
 };
+exports.getAllExpert = (req,res) =>{
+  User.find({type:1},(error,users)=>{
+    if(error || !users){
+      res.status(400)
+      ErrorMessage(res,error,"Erreur Api")
+    }else {
+      res.status(200).json({message: "List Expert",users});
+    }
+  })
+}
