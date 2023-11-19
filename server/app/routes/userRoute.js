@@ -230,5 +230,7 @@ server.route("/users/:userId")
 server.post("/user/forgetpassword", cors(corsConfig), userController.demandeReinitialisationMotDePasse);
 server.post("/user/validatetoken",cors(corsConfig),userController.checkToken);
 server.post("/user/editpassword",cors(corsConfig),userController.reinitialiserMotDePasse)
+
+server.get("/user/expert/",cors(corsConfig),userController.getAllExpert)
 }
 

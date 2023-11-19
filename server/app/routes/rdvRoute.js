@@ -35,7 +35,7 @@ module.exports = (server,corsConfig) => {
      *       200:
      *         description: Rendez-vous créé 
      */
-    server.post("/rdv/set", cors(), rdvController.createRdv);
+    server.post("/rdv/set", cors(corsConfig), rdvController.createRdv);
     
     /**
      * @openapi
@@ -51,7 +51,7 @@ module.exports = (server,corsConfig) => {
      *       200:
      *         description: get all rdvs
      */
-    server.get("/rdv/",cors(),rdvController.getAllRdvs);
+    server.get("/rdv/",cors(corsConfig),rdvController.getAllRdvs);
     /**
      * @openapi
      * paths:
@@ -69,7 +69,7 @@ module.exports = (server,corsConfig) => {
      *       200:
      *         description: get one rdv by id 
      */
-    server.get("/rdv/get/:rdvId",cors(),rdvController.getRdvById);
+    server.get("/rdv/get/:rdvId",cors(corsConfig),rdvController.getRdvById);
     /**
      * @openapi
      * paths:
@@ -85,9 +85,9 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: Rendez-vous créé 
+     *         description: Rendez-vous supprimé 
      */
-    server.delete("/rdv/get/:rdvId",cors(),rdvController.deleteRdv);
+    server.delete("/rdv/get/:rdvId",cors(corsConfig),rdvController.deleteRdv);
     
     /**
      * @openapi
@@ -99,29 +99,36 @@ module.exports = (server,corsConfig) => {
      *     description: API allowing the user to get a rdv by name
      *     parameters:
      *      - in: body
-     *        name: DateDebut
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: DateFin
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: Confirmation
-     *        schema:
-     *          type: boolean
-     *      - in: body
-     *        name: CompteClient
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: CompteExpert
+     *        name: Compte
      *        schema:
      *          type: string
      *     responses:
      *       200:
-     *         description: Rendez-vous créé 
+     *         description: Get rendez-vous 
      */
-    server.get("/rdv/getbyuser/",cors(),rdvController.getRdvbyName);
-
+    server.get("/rdv/getbyuser/",cors(corsConfig),rdvController.getRdvbyName);
+    
+    
+    /**
+     * @openapi
+     * paths:
+     *  /rdv/getbyuserandbydate/:
+     *   get:
+     *     tags:
+     *      - Rdv
+     *     description: API allowing the user to get a rdv by name and by date
+     *     parameters:
+     *      - in: body
+     *        name: Compte
+     *        schema:
+     *          type: string
+     *      - in: body
+     *        name: Date
+     *        schema:
+     *          type: string
+     *     responses:
+     *       200:
+     *         description: Get all rendez-vous  
+     */
+server.get("/rdv/getbydate/",cors(corsConfig),rdvController.getRdvByDate);
 }
