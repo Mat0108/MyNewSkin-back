@@ -19,14 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configuration des options CORS en fonction de l'environnement
 var corsOptionsProd = {
-  origin: `https://po-skin.fr`,
+  origin: process.env.PROD_URL,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 var corsOptionsDev = {
   origin: process.env.DEV_URL,
   optionsSuccessStatus: 200
 }
-var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : null
+var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : process.env.ENV_TYPE == "dev" ? corsOptionsDev : null
 app.use(cors(corsOptions));
 
 // Connexion à la base de données MongoDB via Mongoose
