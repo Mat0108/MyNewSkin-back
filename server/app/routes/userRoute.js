@@ -122,7 +122,7 @@ server.get("/users", cors(corsConfig), userController.getAllUsers);
  *       200:
  *         description: Returns user by Id
  */
-server.route("/users/:userId")
+server.route("/user/:userId")
 .all(cors(corsConfig))
 
 

@@ -79,11 +79,5 @@ exports.DiagnosticData = [
 		"type":"multi",
 		"width":"w-[330px]",
 		"rounded":""
-	},
-	{
-		"image":"/images/Diagnostic/diagnostic6.png",
-		"title":"Pour garder une trace de votre diagnostic de peau, veuillez vous connecter ou créer un compte :",
-		"reponses":[
-		],
 	}
 ]

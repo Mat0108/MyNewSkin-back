@@ -5,7 +5,6 @@ const { ErrorMessage } = require("./Message");
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-
 // ////////////////////////////////////////////////////////////////////
 // passport.use(new GoogleStrategy({
 //   clientID: 'YOUR_GOOGLE_CLIENT_ID',
@@ -280,10 +279,8 @@ exports.patchUser = (req, res) => {
 // Fonction pour demander la réinitialisation du mot de passe
 exports.demandeReinitialisationMotDePasse = (req, res) => {
   const { email } = req.body;
-
   User.findOne({ email }, (error, user) => {
     if (error || !user) {
-
       res.status(404)
       console.log(error)
       ErrorMessage(res,error,"Utilisateur non trouvé");
@@ -296,7 +293,8 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
     user.save((error, user) => {
       if (error) {
         res.status(500).json({ message: "Erreur serveur", error });
-      }
+      }else{
+
 
       const mailOptions = {
         from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
@@ -314,6 +312,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
         console.log("E-mail de réinitialisation envoyé : " + info);
         res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
       });
+      }
     });
   });
 };

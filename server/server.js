@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-let version = "1.6.0"
+let version = "1.7.0"
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -33,7 +33,8 @@ app.use(cors(corsOptions));
 const db = require("./app/models");
 db.mongoose.connect(db.url, { useNewUrlParser: true })
   .then(() => {
-    console.log("Connecté à la base de données!");
+    console.log("Connecté à la base de données! ");
+    console.log(`version : ${version}`)
   })
   .catch(err => {
     console.log("Impossible de se connecter à la base de données!",err);
