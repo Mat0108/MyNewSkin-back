@@ -24,10 +24,37 @@ module.exports = (server,corsConfig) => {
      *   post:
      *     tags:
      *       - Form
+     *     description: get form!
+     *     responses:
+     *       200:
+     *         description: return from
+     */
+    server.get("/form/get/:formId", cors(corsConfig), formController.getFormById);
+    /**
+     * @openapi
+     * paths:
+     *  /form/get:
+     *   post:
+     *     tags:
+     *       - Form
+     *     description: get form pdf!
+     *     responses:
+     *       200:
+     *         description: return all from
+     */
+    server.get("/form/pdf/:formId", cors(corsConfig), formController.getFormByIdPdf);
+
+    /**
+     * @openapi
+     * paths:
+     *  /form/get:
+     *   post:
+     *     tags:
+     *       - Form
      *     description: get All form!
      *     responses:
      *       200:
      *         description: return all from
      */
-server.get("/form/get", cors(corsConfig), formController.getFormById);
+    server.post("/form/mail/", cors(corsConfig), formController.getFormsByMail);
 }
