@@ -114,7 +114,6 @@ exports.getFormById = (req,res)=>{
 }
 
 exports.getFormByIdPdf=(req,res)=>{
-    console.log('req : ', req)
     Form.findById(req.params.formId, (error, form) => {
         if (error) {
             res.status(401);

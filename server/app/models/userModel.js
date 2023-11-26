@@ -38,6 +38,9 @@ let userSchema = new Schema({
     },
     resetPasswordExpires: {
         type: Date,
+    },
+    imageBase64:{
+        type: String
     }
 });
 

@@ -125,7 +125,18 @@ server.get("/users", cors(corsConfig), userController.getAllUsers);
 server.route("/user/:userId")
 .all(cors(corsConfig))
 
-
+/**
+ * @openapi
+ * paths:
+ *  /users/:userId:
+ *   get:
+ *     tags:
+ *      - User
+ *     description: get user information
+ *     responses:
+ *       200:
+ *         description: Return a succes message
+ */
 .get(userController.getUserById)
 
 
@@ -227,10 +238,13 @@ server.route("/user/:userId")
 .patch(userController.patchUser);
 
 
-server.post("/user/forgetpassword", cors(corsConfig), userController.demandeReinitialisationMotDePasse);
-server.post("/user/validatetoken",cors(corsConfig),userController.checkToken);
-server.post("/user/editpassword",cors(corsConfig),userController.reinitialiserMotDePasse)
+server.post("/users/forgetpassword", cors(corsConfig), userController.demandeReinitialisationMotDePasse);
+server.post("/users/validatetoken",cors(corsConfig),userController.checkToken);
+server.post("/users/editpassword",cors(corsConfig),userController.reinitialiserMotDePasse)
 
-server.get("/user/expert/",cors(corsConfig),userController.getAllExpert)
+server.get("/users/expert",cors(corsConfig),userController.getAllExpert)
+
+
+server.get("/users/activate/:userId",cors(corsConfig),userController.activateAccount)
 }
 

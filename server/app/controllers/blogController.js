@@ -81,7 +81,6 @@ exports.deleteBlog = (req, res) => {
 
 // Route pour rechercher des articles de blog par titre (utilisation d'expressions régulières pour la recherche)
 exports.searchBlog = (req,res) =>{
-    console.log(req.params.searchId)
     Blog.find( { "title": { "$regex": `${req.params.searchId}`, "$options": "i" } }, (error, blog) => {
         if (error) {
             res.status(401);

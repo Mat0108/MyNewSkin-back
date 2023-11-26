@@ -106,7 +106,7 @@ module.exports = (server,corsConfig) => {
      *       200:
      *         description: Get rendez-vous 
      */
-    server.get("/rdv/getbyuser/",cors(corsConfig),rdvController.getRdvbyName);
+    server.post("/rdv/getbyuser/",cors(corsConfig),rdvController.getRdvbyName);
     
     
     /**

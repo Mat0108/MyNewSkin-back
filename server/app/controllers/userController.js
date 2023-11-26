@@ -66,7 +66,7 @@ exports.userRegister = (req, res, error) => {
               from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
               to: user.email, // Adresse du destinataire
               subject: "Confirmation d'inscription",
-              html: `Bienvenue sur notre site ! Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://votresite.com/activate/${user._id}">Activer le compte</a>`,
+              html: `Bienvenue sur notre site Po. ! <br> Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://po-skin.fr/activate/${user._id}">Activer le compte</a>`,
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -368,4 +368,15 @@ exports.getAllExpert = (req,res) =>{
       res.status(200).json({message: "List Expert",users});
     }
   })
+}
+
+exports.activateAccount = (req,res)=>{
+  User.findByIdAndUpdate(req.params.userId, {confirmed:true}, { new: true })
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+        res.status(200).json({ message: "Utilisateur a bien été confirmé ! ", user });
+      })
+      .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
 }
