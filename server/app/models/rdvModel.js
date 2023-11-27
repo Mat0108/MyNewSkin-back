@@ -14,6 +14,10 @@ let rdvSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  Type:{
+    type:Boolean,
+    default:false
+  },
   // On ajoute ici, les références aux utilisateurs (compte client)
   CompteClient: {
     type: Schema.Types.ObjectId,
