@@ -41,7 +41,30 @@ let userSchema = new Schema({
     },
     imageBase64:{
         type: String
+    },
+    adresse:{
+        type:String
+    },
+    ville:{
+        type:String
+    },
+    codepostal:{
+        type:String
+    },
+    telephone:{
+        type:String
+    },
+    showDermatoloque:{
+        type:Boolean
+    },
+    allergiestype:{
+        type:Boolean
+    },
+    allergies:{
+        type:String
     }
+    
+
 });
 
 module.exports = mongoose.model("User", userSchema);

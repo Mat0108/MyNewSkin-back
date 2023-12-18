@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-let version = "1.8.0"
+let version = "1.9.0"
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
