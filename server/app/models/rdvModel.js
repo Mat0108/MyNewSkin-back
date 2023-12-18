@@ -26,6 +26,9 @@ let rdvSchema = new Schema({
   CompteExpert: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  Observation:{
+    type:String
   }
 });
 
