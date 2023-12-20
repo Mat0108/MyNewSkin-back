@@ -5,7 +5,6 @@ const { ErrorMessage } = require("./Message");
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-
 // ////////////////////////////////////////////////////////////////////
 // passport.use(new GoogleStrategy({
 //   clientID: 'YOUR_GOOGLE_CLIENT_ID',
@@ -27,7 +26,6 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 //   done(null, obj);
 // });
 /////////////////////////////////////////////////////////////////
-
 
 // Configurez Nodemailer pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
@@ -68,7 +66,7 @@ exports.userRegister = (req, res, error) => {
               from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
               to: user.email, // Adresse du destinataire
               subject: "Confirmation d'inscription",
-              html: `Bienvenue sur notre site ! Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://votresite.com/activate/${user._id}">Activer le compte</a>`,
+              html: `Bienvenue sur notre site Po. ! <br> Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://po-skin.fr/Activate/${user._id}">Activer le compte</a>`,
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -151,11 +149,9 @@ exports.userLogin = (req, res) => {
                             });
                         }
                         else {
-                            res.status(401);
+                            res.status(200);
                             console.log(error);
-                            
-                            res.json({ message: error })
-                            // res.json({ message: "Utilisateur est déjà connecté" });
+                            res.json({ message: "Utilisateur est déjà connecté" ,user});
                         }
                     }
                 })
@@ -165,8 +161,7 @@ exports.userLogin = (req, res) => {
                 
                 res.json({ message: error })
                 // res.json({ message: "Email ou mot de passe incorrect" });
-                console.log(error);
-            }
+                }
         }
     })
 }
@@ -197,9 +192,8 @@ exports.userLogout = (req, res, error) => {
                     });
                 }
                 else {
-                    res.status(401);
-                    console.log(error);
-                    res.json({ message: 'Utilisateur connecté non trouvé' });
+                    res.status(200);
+                    res.json({ message: 'Utilisateur non connecté ' });
                 }
             }
         })
@@ -284,10 +278,8 @@ exports.patchUser = (req, res) => {
 // Fonction pour demander la réinitialisation du mot de passe
 exports.demandeReinitialisationMotDePasse = (req, res) => {
   const { email } = req.body;
-
   User.findOne({ email }, (error, user) => {
     if (error || !user) {
-
       res.status(404)
       console.log(error)
       ErrorMessage(res,error,"Utilisateur non trouvé");
@@ -300,7 +292,8 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
     user.save((error, user) => {
       if (error) {
         res.status(500).json({ message: "Erreur serveur", error });
-      }
+      }else{
+
 
       const mailOptions = {
         from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
@@ -318,6 +311,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
         console.log("E-mail de réinitialisation envoyé : " + info);
         res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
       });
+      }
     });
   });
 };
@@ -364,3 +358,24 @@ exports.reinitialiserMotDePasse = (req, res) => {
   })
   
 };
+exports.getAllExpert = (req,res) =>{
+  User.find({type:1},(error,users)=>{
+    if(error || !users){
+      res.status(400)
+      ErrorMessage(res,error,"Erreur Api")
+    }else {
+      res.status(200).json({message: "List Expert",users});
+    }
+  })
+}
+
+exports.activateAccount = (req,res)=>{
+  User.findByIdAndUpdate(req.params.userId, {confirmed:true}, { new: true })
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+        res.status(200).json({ message: "Utilisateur a bien été confirmé ! ", user });
+      })
+      .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+}

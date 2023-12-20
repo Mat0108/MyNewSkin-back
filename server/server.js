@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-
+let version = "1.9.0";
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Middleware pour analyser les requêtes au format x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static('public'));
 // Configuration des options CORS en fonction de l'environnement
 var corsOptionsProd = {
   origin: process.env.PROD_URL,
@@ -26,14 +26,16 @@ var corsOptionsDev = {
   origin: process.env.DEV_URL,
   optionsSuccessStatus: 200
 }
-var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : null
+var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : process.env.ENV_TYPE == "dev" ? corsOptionsDev : null
+console.log('corsOptions : ', corsOptions)
 app.use(cors(corsOptions));
 
 // Connexion à la base de données MongoDB via Mongoose
 const db = require("./app/models");
 db.mongoose.connect(db.url, { useNewUrlParser: true })
   .then(() => {
-    console.log("Connecté à la base de données!");
+    console.log("Connecté à la base de données! ");
+    console.log(`version : ${version}`)
   })
   .catch(err => {
     console.log("Impossible de se connecter à la base de données!",err);
@@ -46,7 +48,7 @@ const swaggerOptions = {
     openapi: '3.0.0',
     info: {
       title: 'Po. Documentation API',
-      version: '1.0.0',
+      version: version,
       description: 'Documentation pour le projet Po.',
       contact: {
         name: 'Coumba Diankha',
@@ -83,33 +85,50 @@ passport.deserializeUser((username, done) => {
   done(null, { username });
 });
 
-
 // Middleware pour la gestion de sessions
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
 // Utilisez Passport comme middleware d'authentification
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 // Serveur Swagger à l'URL "/api-docs"
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Route simple pour la page d'accueil
 app.get("/", (req, res) => {
-  res.json({ message: "Bienvenue sur l'application Po." });
+  res.json({ message: `Bienvenue sur l'application Po. Version : ${version}` });
 });
 
 // Import et configuration des routes de l'application
 const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
-const mailRoute = require("./app/routes/mailRoute");
 const rdvRoute = require("./app/routes/rdvRoute");
 const formRoute = require("./app/routes/formRoute")
 userRoute(app, corsOptions);
 blogRoute(app, corsOptions);
-mailRoute(app, corsOptions);
 rdvRoute(app, corsOptions);
 formRoute(app,corsOptions)
+
+const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
+
+const YOUR_DOMAIN = 'http://localhost:3000';
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: 'price_1OP6poCf2iWivd4SRiiGcV0o',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${YOUR_DOMAIN}?success=true`,
+    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+  });
+
+  res.redirect(303, session.url);
+});
 
 // Ajoutez une route pour gérer la connexion (authentification)
 app.post('/login',

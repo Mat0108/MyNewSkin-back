@@ -19,6 +19,9 @@ let formModel = new Schema({
     }],
     mail:{
         type:String
+    },
+    date:{
+        type:Date
     }
     
 

@@ -37,3 +37,14 @@ If you need to stop and remove all containers, networks, and all images used by 
 docker-compose down --rmi all
 ```
 
+
+## Reload Docker
+```bash
+.\reload.bat
+```
+
+## Deploy
+Avec l'acces au compte hub.docker ainsi qu'au compte de l'hebergeur
+```bash
+.\deploy.bash
+```

@@ -44,7 +44,7 @@ services:
     #   - mongodb
     #on build le server avec le dockerfile du dossier server
     build: ./server
-    restart: unless-stopped
+    restart: always
     env_file: .env
     ports:
       - $NODE_PORT:$NODE_PORT
@@ -54,6 +54,8 @@ services:
       - MONGODB_URL=$MONGODB_URL
       - ENV_TYPE=$ENV_TYPE
       - DEV_URL=$DEV_URL
+      - OUTLOOK_MAIL=$OUTLOOK_MAIL
+      - OUTLOOK_PASS=$OUTLOOK_PASS
     stdin_open: true
     tty: true
     cap_drop:
@@ -67,5 +69,3 @@ volumes:
 networks:
   server:
     driver: bridge
-#mongodb://poskinadmin:passpo349535@mongodb:27017/poskindb
-#mongodb://poskinadmin:passpo349535@mongodb:27017/poskindb?authSource=admin
