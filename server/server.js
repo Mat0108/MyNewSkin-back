@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Middleware pour analyser les requêtes au format x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static('public'));
 // Configuration des options CORS en fonction de l'environnement
 var corsOptionsProd = {
   origin: process.env.PROD_URL,
@@ -122,11 +122,11 @@ formRoute(app,corsOptions)
 ///////////////////////////////////////////////////////////////////////////////////
 // This is your test secret API key.
 const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
-app.use(express.static('public'));
 
-const YOUR_DOMAIN = 'http://localhost:8080';
 
-app.post('/create-checkout-session',corsOptions, async (req, res) => {
+const YOUR_DOMAIN = 'http://localhost:3000';
+
+app.post('/create-checkout-session', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -144,7 +144,6 @@ app.post('/create-checkout-session',corsOptions, async (req, res) => {
 });
 
 
-app.listen(4242, () => console.log('Running on port 4242'));
 
 // Ajoutez une route pour gérer la connexion (authentification)
 app.post('/login',
