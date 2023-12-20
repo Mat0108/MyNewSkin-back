@@ -6,6 +6,11 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
+
+
+///////////////////////////////////////////////////////
+
+
 let version = "1.8.0"
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -112,6 +117,34 @@ blogRoute(app, corsOptions);
 mailRoute(app, corsOptions);
 rdvRoute(app, corsOptions);
 formRoute(app,corsOptions)
+
+// STRIPE 
+///////////////////////////////////////////////////////////////////////////////////
+// This is your test secret API key.
+const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
+app.use(express.static('public'));
+
+const YOUR_DOMAIN = 'http://localhost:8080';
+
+app.post('/create-checkout-session',corsOptions, async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: 'price_1OP6poCf2iWivd4SRiiGcV0o',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${YOUR_DOMAIN}?success=true`,
+    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+  });
+
+  res.redirect(303, session.url);
+});
+
+
+app.listen(4242, () => console.log('Running on port 4242'));
 
 // Ajoutez une route pour gérer la connexion (authentification)
 app.post('/login',
