@@ -28,7 +28,9 @@ describe('ErrorMessage Function', () => {
         // Mock de la fonction de réponse
         const res = {
             json: (error) => {
-                expect(error).to.be.null;
+                expect(error).to.be.an('object'); // Assurez-vous que l'erreur est un objet
+                expect(error.errorCode).to.equal(500); // Assurez-vous que le code d'erreur est 500
+                expect(error.errorMessage).to.equal('Internal Server Error'); // Assurez-vous que le message d'erreur est correct
             }
         };
 
@@ -41,7 +43,7 @@ describe('ErrorMessage Function', () => {
 describe('logoBase64 Function', () => {
     it('should return a base64-encoded PNG image string', () => {
         const result = logoBase64();
-        // Assurez-vous que le résultat est une chaîne valide commençant par "data:image/png;base64"
+        // Assurez-vous que le résultat est une chaîne valide commençant par "data:image/png;base64,"
         expect(result).to.be.a('string').and.to.match(/^data:image\/png;base64,/);
     });
 });
