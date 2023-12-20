@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-let version = "1.9.0"
+let version = "1.9.0";
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Middleware pour analyser les requêtes au format x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static('public'));
 // Configuration des options CORS en fonction de l'environnement
 var corsOptionsProd = {
   origin: process.env.PROD_URL,
@@ -85,13 +85,11 @@ passport.deserializeUser((username, done) => {
   done(null, { username });
 });
 
-
 // Middleware pour la gestion de sessions
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
 // Utilisez Passport comme middleware d'authentification
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // Serveur Swagger à l'URL "/api-docs"
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -104,14 +102,33 @@ app.get("/", (req, res) => {
 // Import et configuration des routes de l'application
 const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
-const mailRoute = require("./app/routes/mailRoute");
 const rdvRoute = require("./app/routes/rdvRoute");
 const formRoute = require("./app/routes/formRoute")
 userRoute(app, corsOptions);
 blogRoute(app, corsOptions);
-mailRoute(app, corsOptions);
 rdvRoute(app, corsOptions);
 formRoute(app,corsOptions)
+
+const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
+
+const YOUR_DOMAIN = 'http://localhost:3000';
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: 'price_1OP6poCf2iWivd4SRiiGcV0o',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${YOUR_DOMAIN}?success=true`,
+    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+  });
+
+  res.redirect(303, session.url);
+});
 
 // Ajoutez une route pour gérer la connexion (authentification)
 app.post('/login',
