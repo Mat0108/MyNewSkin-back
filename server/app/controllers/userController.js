@@ -66,7 +66,7 @@ exports.userRegister = (req, res, error) => {
               from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
               to: user.email, // Adresse du destinataire
               subject: "Confirmation d'inscription",
-              html: `Bienvenue sur notre site Po. ! <br> Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://po-skin.fr/activate/${user._id}">Activer le compte</a>`,
+              html: `Bienvenue sur notre site Po. ! <br> Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://po-skin.fr/Activate/${user._id}">Activer le compte</a>`,
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -192,9 +192,8 @@ exports.userLogout = (req, res, error) => {
                     });
                 }
                 else {
-                    res.status(401);
-                    console.log(error);
-                    res.json({ message: 'Utilisateur connecté non trouvé' });
+                    res.status(200);
+                    res.json({ message: 'Utilisateur non connecté ' });
                 }
             }
         })
