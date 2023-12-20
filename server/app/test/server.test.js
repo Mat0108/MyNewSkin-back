@@ -1,7 +1,7 @@
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../app'); // Mettez le chemin correct vers votre fichier principal
+const app = require('../app');
 const expect = chai.expect;
 
 chai.use(chaiHttp);
@@ -26,7 +26,7 @@ describe('App', () => {
       });
   });
 
-  // Ajoutez d'autres tests pour les routes, middleware, etc.
+
   describe('Authentication', () => {
     it('should return 302 on successful login', (done) => {
       chai.request(app)
