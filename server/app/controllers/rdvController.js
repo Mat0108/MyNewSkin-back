@@ -43,6 +43,7 @@ exports.createRdv = (req, res) => {
                                 date: selectedDate,
                                 time: selectedTime,
                                 expert: CompteExpert.email,
+                                id:rdv._id
                             };
                             res.status(200);
                             res.json({ message: "Rendez-vous créé", summary });
