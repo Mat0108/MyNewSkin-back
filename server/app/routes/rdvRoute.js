@@ -130,5 +130,28 @@ module.exports = (server,corsConfig) => {
      *       200:
      *         description: Get all rendez-vous  
      */
-server.get("/rdv/getbydate/",cors(corsConfig),rdvController.getRdvByDate);
+    server.get("/rdv/getbydate/",cors(corsConfig),rdvController.getRdvByDate);
+
+    /**
+     * @openapi
+     * paths:
+     *  /rdv/getbyuserandbydate/:
+     *   get:
+     *     tags:
+     *      - Rdv
+     *     description: API allowing the user to update a rdv by
+     *     parameters:
+     *      - in: body
+     *        name: Compte
+     *        schema:
+     *          type: string
+     *      - in: body
+     *        name: Date
+     *        schema:
+     *          type: string
+     *     responses:
+     *       200:
+     *         description: Retourne un rendez-vous confirmé  
+     */
+    server.post("/rdv/update/:rdvId",cors(corsConfig),rdvController.updateRdv)
 }

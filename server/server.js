@@ -111,9 +111,9 @@ formRoute(app,corsOptions)
 
 const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
 
-const YOUR_DOMAIN = 'http://localhost:3000';
+const DOMAIN = process.env.ENV_TYPE == "prod" ? process.url.PROD_URL : process.env.DEV_URL;
 
-app.post('/create-checkout-session', async (req, res) => {
+app.post('/create-checkout-session/:rdvId', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -123,8 +123,8 @@ app.post('/create-checkout-session', async (req, res) => {
       },
     ],
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    success_url: `${DOMAIN}/ConfirmRdv/${req.params.rdvId}?success=true`,
+    cancel_url: `${DOMAIN}/ConfirmRdv/${req.params.rdvId}?success=false`,
   });
 
   res.redirect(303, session.url);
