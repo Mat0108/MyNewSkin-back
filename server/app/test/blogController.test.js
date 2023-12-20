@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../controllers/blogController.js');  // Assurez-vous d'importer votre application correctement
+const app = require('../controllers/blogController.js');
 const should = chai.should();
 
 chai.use(chaiHttp);
@@ -10,7 +10,7 @@ describe('Blog API', () => {
     describe('/POST setBlog', () => {
         it('devrait créer un nouvel article de blog', (done) => {
             const newBlog = {
-                // Définissez les propriétés du blog comme dans votre exemple
+                // les propriétés du blog comme dans votre exemple
             };
 
             chai.request(app)
@@ -20,7 +20,7 @@ describe('Blog API', () => {
                     res.should.have.status(200);
                     res.body.should.be.a('object');
                     res.body.should.have.property('title');
-                    // Ajoutez d'autres assertions en fonction de votre logique
+                    
                     done();
                 });
         });
