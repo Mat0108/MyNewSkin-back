@@ -1,6 +1,6 @@
 // Importation du modèle de données du blog
 const Blog = require("../models/blogModel");
-
+const { ErrorMessage } = require("../config/config");
 // Route pour créer un nouvel article de blog
 exports.setBlog  = (req, res) => {
     // Création d'une nouvelle instance de Blog avec les données du corps de la requête
@@ -19,13 +19,12 @@ exports.setBlog  = (req, res) => {
         if (error) {
             // En cas d'erreur, renvoyer une réponse avec le statut 401 (Non autorisé) et un message d'erreur
             res.status(401);
-            console.log(error);
-            res.json({ message: error });
+            ErrorMessage(res,error,"Impossible de créer un blog")
         }
         else {
             // En cas de succès, renvoyer une réponse avec le statut 200 (OK) et les données du blog créé
             res.status(200);
-            res.json(blog);
+            res.json({message:"Le blog a bien été crée",blog});
         }
     })
 }
@@ -33,15 +32,15 @@ exports.setBlog  = (req, res) => {
 // Route pour récupérer un article de blog par ID
 exports.getBlog = (req, res) => {
     // Recherche d'un article de blog par son identifiant unique dans la base de données
-    Blog.findById(req.params.blogId, (error, blog) => {
+    Blog.findById(req.params.blogId, (error, blogs) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message:error });
+            ErrorMessage(res,error,"Impossible de récuperer tous les blogs")
+        
         }
         else {
             res.status(200);
-            res.json(blog);
+            res.json({message:"Retourne tous les blogs",blogs});
         }
     })
 }

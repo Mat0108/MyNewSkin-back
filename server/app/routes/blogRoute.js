@@ -9,69 +9,25 @@ module.exports = (server,corsConfig) => {
      *   post:
      *     tags:
      *       - Blog
-     *     description: Create a rdv
-     *     parameters:
-     *      - in: body
-     *        name: title
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: imagepresentation
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: altimagepresentation
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: textpresentation
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: titlelist
-     *        schema:
-     *          type: array
-     *          items:
-     *            - type:string 
-     *      - in: body
-     *        name: textlist
-     *        schema:
-     *          type: array
-     *          items:
-     *            - type:string 
-     *      - in: body
-     *        name: imagelist
-     *        schema:
-     *          type: array
-     *          items:
-     *            - type:string 
-     *      - in: body
-     *        name: altimage
-     *        schema:
-     *          type: array
-     *          items:
-     *            - type:string
-     *      - in: body
-     *        name: textcolor
-     *        schema:
-     *          type: array
-     *          items:
-     *            - type:string  
-     *      - in: body
-     *        name: layout
-     *        schema:
-     *          type: array
-     *          items:
-     *            - type:string 
-     *      - in: body
-     *        name: margin
-     *        schema:
-     *          type: string 
+     *     description: Permet la création d'un nouveau blog 
+     *     requestBody: 
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      $ref: '#components/schema/blog'
      *     responses:
      *       200:
-     *         description: Create a form.
+     *         description: Retourne le blog.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/blog'
+     *       401:
+     *         description: Impossible de créer le blog
+     *      
      */
     server.post("/blog/set", cors(corsConfig), blogController.setBlog);
+    
     /**
      * @openapi
      * paths:
@@ -79,10 +35,13 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *       - Blog
-     *     description: Create a blog
+     *     description: Retourne tous les blogs
      *     responses:
      *       200:
-     *         description: Create a blog.
+     *         description: Retourne tous les blogs.
+     *       401:
+     *         description: Impossible de récuperer tous les blogs
+     * 
      */
     server.get("/blog/",cors(corsConfig),blogController.getAllBlog);
    
