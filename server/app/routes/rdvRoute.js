@@ -9,31 +9,23 @@ module.exports = (server,corsConfig) => {
      *   post:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to create a rdv
-     *     parameters:
-     *      - in: body
-     *        name: DateDebut
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: DateFin
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: Confirmation
-     *        schema:
-     *          type: boolean
-     *      - in: body
-     *        name: CompteClient
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: CompteExpert
-     *        schema:
-     *          type: string
+     *     description: Permet la création d'un rdv 
+     *     requestBody: 
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      $ref: '#components/schema/rdv'
      *     responses:
      *       200:
-     *         description: Rendez-vous créé 
+     *         description: Le rendez vous a bien été crée.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/rdv'
+     *       500:
+     *         description: Impossible de trouver le compte client ou le compte expert
+     *       401:
+     *         description: Impossible de créer le rdv 
      */
     server.post("/rdv/set", cors(corsConfig), rdvController.createRdv);
     
@@ -44,12 +36,16 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to get all user
-     *     parameters:
-     *     
+     *     description: Retourne tous les rdvs
      *     responses:
      *       200:
-     *         description: get all rdvs
+     *         description: Retourne tous les rdvs
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/rdv'
+    *       401:
+     *         description: Impossible de retourne tous les rdvs
      */
     server.get("/rdv/",cors(corsConfig),rdvController.getAllRdvs);
     /**
@@ -59,7 +55,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to create a rdv
+     *     description: Retourne le rdv par son id
      *     parameters:
      *      - in: params
      *        name: rdvId
@@ -67,7 +63,13 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: get one rdv by id 
+     *         description: Retourne le rdv par son id.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/rdv'
+     *       401:
+     *         description: Impossible de récuperer le rdv
      */
     server.get("/rdv/get/:rdvId",cors(corsConfig),rdvController.getRdvById);
     /**
@@ -77,7 +79,7 @@ module.exports = (server,corsConfig) => {
      *   delete:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to delete a rdv
+     *     description: Permet de supprimer un rdv par son id
      *     parameters:
      *      - in: params
      *        name: rdvId
@@ -85,7 +87,9 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: Rendez-vous supprimé 
+     *         description: Le rdv a bien été supprimé.
+     *       401:
+     *         description: Impossible de supprimer le rdv 
      */
     server.delete("/rdv/get/:rdvId",cors(corsConfig),rdvController.deleteRdv);
     
@@ -96,7 +100,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to get a rdv by name
+     *     description: Permet de recuper tous les rdv par un utilisateur
      *     parameters:
      *      - in: body
      *        name: Compte
@@ -104,7 +108,13 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: Get rendez-vous 
+     *         description: Retourne le rdv .
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/rdv'
+     *       401:
+     *         description: Impossible de recuperer le rdv 
      */
     server.post("/rdv/getbyuser/",cors(corsConfig),rdvController.getRdvbyName);
     
@@ -116,42 +126,47 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to get a rdv by name and by date
+     *     description: Permet de recuper tous les rdvs d'un date 
      *     parameters:
-     *      - in: body
-     *        name: Compte
-     *        schema:
-     *          type: string
      *      - in: body
      *        name: Date
      *        schema:
      *          type: string
+     *          format: date
      *     responses:
      *       200:
-     *         description: Get all rendez-vous  
+     *         description: Retourne le rdv .
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/rdv'
+     *       401:
+     *         description: Impossible de recuperer le rdv  
      */
     server.get("/rdv/getbydate/",cors(corsConfig),rdvController.getRdvByDate);
 
     /**
      * @openapi
      * paths:
-     *  /rdv/getbyuserandbydate/:
-     *   get:
+     *  /rdv/update/:
+     *   post:
      *     tags:
      *      - Rdv
-     *     description: API allowing the user to update a rdv by
-     *     parameters:
-     *      - in: body
-     *        name: Compte
-     *        schema:
-     *          type: string
-     *      - in: body
-     *        name: Date
-     *        schema:
-     *          type: string
+     *     description: Permet de modifier un rdv 
+     *     requestBody: 
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      $ref: '#components/schema/rdv'
      *     responses:
      *       200:
-     *         description: Retourne un rendez-vous confirmé  
+     *         description: Le rendez vous a bien été modifié.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/rdv'
+     *       401:
+     *         description: Impossible de modifier le rdv 
      */
     server.post("/rdv/update/:rdvId",cors(corsConfig),rdvController.updateRdv)
 }

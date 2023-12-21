@@ -76,17 +76,21 @@ module.exports = () => {
      *              type: object
      *              properties: 
      *                  DateDebut:
-     *                      type: date
+     *                      type: string
+     *                      format: date
      *                  DateFin:
-     *                      type: date
+     *                      type: string
+     *                      format: date
      *                  Confirmation:
      *                      type: boolean
      *                  Type:
      *                      type: boolean
      *                  CompteClient:
-     *                      type: objectid
+     *                      type: string
+     *                      format: objectId
      *                  CompteExpert:
-     *                      type: objectid
+     *                      type: string
+     *                      format: objectId
      *                  Observation:
      *                      type: string
      *          rdvcreation:

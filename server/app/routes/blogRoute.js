@@ -80,7 +80,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *       - Blog
-     *     description: Create a blog
+     *     description: Retourne le blog par le text alt de son image de presentation.
      *     parameters:
      *      - in: params
      *        name: altId
@@ -88,7 +88,13 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: get a blog by name.
+     *         description: Retourne le blog.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/blog'
+     *       401:
+     *         description: Impossible de récuperer le blog
      */
     server.get("/blog/get/alt/:altId",cors(corsConfig),blogController.getBlogByField);
     
@@ -99,7 +105,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *       - Blog
-     *     description: permet de recherche un blog par son titre (utilisation d'expressions régulières pour la recherche)
+     *     description: permet de recuperer un blog par son titre (utilisation d'expressions régulières pour la recherche)
      *     parameters:
      *      - in: params
      *        name: searchId
