@@ -55,7 +55,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *       - Blog
-     *     description: Retourne le blog par sont id
+     *     description: Retourne le blog par son id
      *     parameters:
      *      - in: params
      *        name: blogId

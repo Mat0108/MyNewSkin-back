@@ -107,11 +107,11 @@ exports.createForm = (req, res) => {
               transporter.sendMail(mailOptions, (error, info) => {
                 if (error){
                     console.log(error);
-                    res.json({message: 'error'});
+                    res.json({message: 'Impossible de créer le formulaire'});
                     res.sendStatus(500);
                 }else{
                     // console.log('Message sent: ' + info.response);
-                    res.status(200).json({"message": "votre diagnostic a bien été envoyé par mail"})
+                    res.status(200).json({"message": "Votre diagnostic a bien été envoyé par mail"})
                 };});
         }})
 }
@@ -120,8 +120,7 @@ exports.getFormById = (req,res)=>{
     Form.findById(req.params.formId, (error, form) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message: "Utilisateur connecté non trouvé" });
+            ErrorMessage(res,error,"Impossible de récuperer le formulaire")
         }
         else {
             res.status(200)
@@ -134,8 +133,7 @@ exports.getFormByIdPdf=(req,res)=>{
     Form.findById(req.params.formId, (error, form) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message: "Utilisateur connecté non trouvé" });
+            ErrorMessage(res,error,"Impossible de récuperer le formulaire")    
         }
         else {
             var file = new jsPDF();
@@ -207,8 +205,7 @@ exports.getFormsByMail = (req,res)=>{
     Form.find({mail:req.body.email}, (error, forms) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message: "Utilisateur connecté non trouvé" });
+            ErrorMessage(res,error,"Impossible de récuperer le formulaire")    
         }else{
             res.status(200)
             res.json(forms)

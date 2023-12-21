@@ -10,51 +10,93 @@ module.exports = (server,corsConfig) => {
      *   post:
      *     tags:
      *       - Form
-     *     description: Create a form
+     *     description: Permet la création d'un formulaire
+     *     requestBody: 
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      $ref: '#components/schema/form'
      *     responses:
      *       200:
-     *         description: Create a form.
+     *         description: Votre diagnostic a bien été envoyé par mail .
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/form'
+     *       401:
+     *         description: Impossible de créer le formulaire 
      */
+    
     server.post("/form/create", cors(corsConfig), formController.createForm);
 
     /**
      * @openapi
      * paths:
-     *  /form/get:
-     *   post:
+     *  /form/get/:formId:
+     *   get:
      *     tags:
      *       - Form
-     *     description: get form!
+     *     description: Retourne le formulaire par son id
+     *     parameters:
+     *      - in: params
+     *        name: blogId
+     *        schema:
+     *          type: string
      *     responses:
      *       200:
-     *         description: return from
+     *         description: Retourne le formulaire par son id.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/form'
+     *       401:
+     *         description: Impossible de récuperer le formulaire
      */
     server.get("/form/get/:formId", cors(corsConfig), formController.getFormById);
+    
     /**
      * @openapi
      * paths:
-     *  /form/get:
-     *   post:
+     *  /form/pdf/:formId:
+     *   get:
      *     tags:
      *       - Form
-     *     description: get form pdf!
+     *     description: Retourne le pdf d'un formulaire par son id
+     *     parameters:
+     *      - in: params
+     *        name: blogId
+     *        schema:
+     *          type: string
      *     responses:
      *       200:
-     *         description: return all from
+     *         description: Retourne le pdf d'un formulaire par son id
+     *       401:
+     *         description: Impossible de récuperer le formulaire
      */
     server.get("/form/pdf/:formId", cors(corsConfig), formController.getFormByIdPdf);
 
     /**
      * @openapi
      * paths:
-     *  /form/get:
+     *  /form/mail/:
      *   post:
      *     tags:
      *       - Form
-     *     description: get All form!
+     *     description: Retourne tous les formulaires d'un mail précis.
+     *     parameters:
+     *      - in: body
+     *        name: mail
+     *        schema:
+     *          type: string
      *     responses:
      *       200:
-     *         description: return all from
+     *         description: Retourne tous les formulaires d'un mail précis.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/form'
+     *       401:
+     *         description: Impossible de récuperer le formulaire
      */
     server.post("/form/mail/", cors(corsConfig), formController.getFormsByMail);
 }

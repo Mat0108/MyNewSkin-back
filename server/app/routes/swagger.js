@@ -59,19 +59,19 @@ module.exports = () => {
      *                  question2:
      *                      type: array
      *                      items:
-     *                          type:number
+     *                          type: number
      *                  question3:
      *                      type: array
      *                      items:
-     *                          type:number
+     *                          type: number
      *                  question4:
      *                      type: array
      *                      items:
-     *                          type:number
+     *                          type: number
      *                  question5:
      *                      type: array
      *                      items:
-     *                          type:number
+     *                          type: number
      *          rdv:
      *              type: object
      *              properties: 
