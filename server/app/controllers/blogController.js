@@ -51,8 +51,8 @@ exports.getBlogByField = (req, res) => {
     Blog.find({altimagepresentation:req.params.altId}, (error, blog) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message:error });
+            ErrorMessage(res,error,"Impossible de récuperer le blog")
+        
         }
         else {
             res.status(200);
@@ -67,8 +67,7 @@ exports.getAllBlog = (req, res) => {
     Blog.find({}, (error, blog) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message:error });
+            ErrorMessage(res,error,"Impossible de récuperer le blog")
         }
         else {
             res.status(200);
@@ -81,8 +80,8 @@ exports.getAllBlog = (req, res) => {
 exports.deleteBlog = (req, res) => {
     // Suppression d'un article de blog par son identifiant unique
     Blog.deleteOne({ _id: req.params.blogId })
-        .then(result => res.status(200).json({ message: "Blog est bien supprimé", result }))
-        .catch((error) => res.status(404).json({ message: "Blog non trouvé" }))
+        .then(result => res.status(200).json({ message: "le blog est bien supprimé", result }))
+        .catch((error) => res.status(401).json({ message: "Impossible de supprimer le blog " }))
 };
 
 // Route pour rechercher des articles de blog par titre (utilisation d'expressions régulières pour la recherche)
@@ -91,8 +90,8 @@ exports.searchBlog = (req,res) =>{
     Blog.find( { "title": { "$regex": `${req.params.searchId}`, "$options": "i" } }, (error, blog) => {
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message:error });
+            ErrorMessage(res,error,"Impossible de récuperer tous le blog")
+        
         }
         else {
             res.status(200);

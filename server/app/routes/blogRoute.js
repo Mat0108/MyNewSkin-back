@@ -39,9 +39,12 @@ module.exports = (server,corsConfig) => {
      *     responses:
      *       200:
      *         description: Retourne tous les blogs.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/blog'
      *       401:
-     *         description: Impossible de récuperer tous les blogs
-     * 
+     *         description: Impossible de récuperer les blogs 
      */
     server.get("/blog/",cors(corsConfig),blogController.getAllBlog);
    
@@ -52,7 +55,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *       - Blog
-     *     description: Create a blog
+     *     description: Retourne le blog par sont id
      *     parameters:
      *      - in: params
      *        name: blogId
@@ -60,7 +63,13 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: get a blog by id.
+     *         description: Retourne le blog par son id.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/blog'
+     *       401:
+     *         description: Impossible de récuperer le blog
      */
     server.get("/blog/get/id/:blogId",cors(corsConfig),blogController.getBlog);
    
@@ -90,7 +99,7 @@ module.exports = (server,corsConfig) => {
      *   get:
      *     tags:
      *       - Blog
-     *     description: Search a blog
+     *     description: permet de recherche un blog par son titre (utilisation d'expressions régulières pour la recherche)
      *     parameters:
      *      - in: params
      *        name: searchId
@@ -98,9 +107,18 @@ module.exports = (server,corsConfig) => {
      *          type: string
      *     responses:
      *       200:
-     *         description: search blog.
+     *         description: Retourne le blog par son titre.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/blog'
+     *       401:
+     *         description: Impossible de récuperer le blog
+     * 
      */
     server.get("/blog/get/search/:searchId",cors(corsConfig),blogController.searchBlog);
+    
+    
     /**
      * @openapi
      * paths:
@@ -108,15 +126,22 @@ module.exports = (server,corsConfig) => {
      *   delete:
      *     tags:
      *       - Blog
-     *     description: delete a blog
+     *     description: Permet de supprimer un blog
      *     parameters:
      *      - in: params
-     *        name: searchId
+     *        name: blogId
      *        schema:
      *          type: string
      *     responses:
      *       200:
-     *         description: delete blog.
-     */
+     *         description: Le blog a bien été supprimé le blog.
+     *         content:
+     *             application/json:
+     *                schema:
+     *                  $ref: '#components/schema/blog'
+     *       401:
+     *         description: Impossible de supprimer le blog 
+    
+    */
     server.delete("/blog/get/:blogId",cors(corsConfig),blogController.deleteBlog);
 }
