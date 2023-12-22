@@ -62,6 +62,9 @@ let userSchema = new Schema({
     },
     allergies:{
         type:String
+    },
+    sexe:{
+        type:String
     }
     
 

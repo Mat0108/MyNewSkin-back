@@ -120,7 +120,7 @@ exports.userLogin = (req, res) => {
                                     console.log(error);
                                     
                                     res.json({ message: error })
-                                    res.json({ message: "Rêquete invalide" });
+                                    res.json({ message: "Requête invalide" });
                                 }
                                 else {
                                     let userData = {
@@ -183,7 +183,7 @@ exports.userLogout = (req, res, error) => {
                         if (error) {
                             res.status(401);
                             console.log(error);
-                            res.json({ message: "Rêquete invalide" });
+                            res.json({ message: "Requête invalide" });
                         }
                         else {
                             res.status(200);
@@ -212,7 +212,7 @@ exports.getAllUsers = (req, res) => {
         if (error) {
             res.status(500);
             console.log(error);
-            res.json({ message: "Erreur serveur" });
+            res.json({ message: "Requête invalide" });
         }
         else {
             res.status(200);
@@ -227,7 +227,7 @@ exports.getUserById = (req, res) => {
     User.findById(req.params.userId).exec(function (error, user) {
         if (error) {
             res.status(401);
-            res.json({ message: "Utilisateur connecté non trouvé" });
+            res.json({ message: "Utilisateur non trouvé" });
             console.log(error);
         }
         else {
@@ -246,7 +246,7 @@ exports.updateUser = (req, res) => {
         }
         res.status(200).json({ message: "Utilisateur est bien mis à jour", user });
       })
-      .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+      .catch(error => res.status(500).json({ message: "Requête invalide", error }));
 };
   
 

@@ -36,13 +36,14 @@ exports.createRdv = (req, res) => {
                     newRdv.save((error, rdv) => {
                         if (error) {
                             res.status(401);
-                            ErrorMessage(res,error,"Échec de la création du rendez-vous")
+                            ErrorMessage(res,error,"Impossible de créer le rdv")
                         } else {
                             // Création d'un résumé des choix de l'utilisateur
                             const summary = {
                                 date: selectedDate,
                                 time: selectedTime,
                                 expert: CompteExpert.email,
+                                id:rdv._id
                             };
                             res.status(200);
                             res.json({ message: "Rendez-vous créé", summary });
@@ -59,8 +60,7 @@ exports.getAllRdvs = (req, res) => {
   Rdv.find({}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
     if (error) {
       res.status(401);
-      console.log(error);
-      res.json({ message:error });
+      ErrorMessage(res,error,"Impossible de retourne tous les rdvs")
   }
   else {
       res.status(200);
@@ -73,8 +73,7 @@ exports.getRdvById = async (req, res) => {
     Rdv.findById(req.params.rdvId).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
       if (error) {
         res.status(401);
-        console.log(error);
-        res.json({ message:error });
+        ErrorMessage(res,error,"Impossible de supprimer le rdv par son id")
     }
     else {
         res.status(200);
