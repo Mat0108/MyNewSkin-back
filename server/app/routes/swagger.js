@@ -6,7 +6,19 @@ module.exports = () => {
      *      schema:
      *          error:
      *              message:
-     *                  type:string
+     *                  type: string
+     *          tokenvalide:
+     *              type: object
+     *              properties: 
+     *                  succes:
+     *                      type: boolean
+     *                      default: true
+     *          tokeninvalide:
+     *              type: object
+     *              properties: 
+     *                  succes:
+     *                      type: boolean
+     *                      default: false 
      *          blog:
      *              type: object
      *              properties: 
@@ -104,7 +116,7 @@ module.exports = () => {
      *                      type: string
      *                  CompteExpert:
      *                      type: string
-     *          usercreation:
+     *          user:
      *              type: object
      *              properties: 
      *                  firstname:

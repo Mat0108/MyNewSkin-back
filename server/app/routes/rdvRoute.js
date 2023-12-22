@@ -10,22 +10,22 @@ module.exports = (server,corsConfig) => {
      *     tags:
      *      - Rdv
      *     description: Permet la création d'un rdv 
-     *     requestBody: 
-     *          content:
-     *              application/json:
-     *                  schema:
-     *                      $ref: '#components/schema/rdv'
-     *     responses:
-     *       200:
-     *         description: Le rendez vous a bien été crée.
-     *         content:
-     *             application/json:
-     *                schema:
-     *                  $ref: '#components/schema/rdv'
-     *       500:
-     *         description: Impossible de trouver le compte client ou le compte expert
-     *       401:
-     *         description: Impossible de créer le rdv 
+        *     requestBody: 
+        *          content:
+        *              application/json:
+        *                  schema:
+        *                      $ref: '#components/schema/rdv'
+        *     responses:
+        *       200:
+        *         description: Le rendez vous a bien été crée.
+        *         content:
+        *             application/json:
+        *                schema:
+        *                  $ref: '#components/schema/rdv'
+        *       500:
+        *         description: Impossible de trouver le compte client ou le compte expert
+        *       401:
+        *         description: Impossible de créer le rdv 
      */
     server.post("/rdv/set", cors(corsConfig), rdvController.createRdv);
     
