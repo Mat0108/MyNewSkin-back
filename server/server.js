@@ -43,6 +43,7 @@ db.mongoose.connect(db.url, { useNewUrlParser: true })
   });
 
 // Configuration des options Swagger
+const urlSwagger = process.ENV_TYPE == "prod" ? "https://coral-app-d9hf4.ondigitalocean.app" :  "http://localhost:8080"
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -54,7 +55,7 @@ const swaggerOptions = {
         name: 'Coumba Diankha',
         email: 'coumba.diankha@my-digital-school.org',
       },
-      servers: ["http://localhost:8080"],
+      servers: [urlSwagger],
     },
   },
   apis: ["./app/routes/*.js"] // Spécifiez ici les fichiers de routes à inclure dans la documentation Swagger
@@ -118,7 +119,7 @@ app.post('/create-checkout-session/:rdvId', async (req, res) => {
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: 'price_1OP6poCf2iWivd4SRiiGcV0o',
+        price: 'price_1OQ4e0Cf2iWivd4SfLZGFXrK',
         quantity: 1,
       },
     ],
