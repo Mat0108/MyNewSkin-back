@@ -43,6 +43,7 @@ db.mongoose.connect(db.url, { useNewUrlParser: true })
   });
 
 // Configuration des options Swagger
+const urlSwagger = process.ENV_TYPE == "prod" ? "https://coral-app-d9hf4.ondigitalocean.app" :  "http://localhost:8080"
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -54,7 +55,7 @@ const swaggerOptions = {
         name: 'Coumba Diankha',
         email: 'coumba.diankha@my-digital-school.org',
       },
-      servers: ["http://localhost:8080"],
+      servers: [urlSwagger],
     },
   },
   apis: ["./app/routes/*.js"] // Spécifiez ici les fichiers de routes à inclure dans la documentation Swagger
@@ -111,20 +112,20 @@ formRoute(app,corsOptions)
 
 const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
 
-const YOUR_DOMAIN = 'http://localhost:3000';
+const DOMAIN = process.env.ENV_TYPE == "prod" ? process.url.PROD_URL : process.env.DEV_URL;
 
-app.post('/create-checkout-session', async (req, res) => {
+app.post('/create-checkout-session/:rdvId', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: 'price_1OP6poCf2iWivd4SRiiGcV0o',
+        price: 'price_1OQ4e0Cf2iWivd4SfLZGFXrK',
         quantity: 1,
       },
     ],
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    success_url: `${DOMAIN}/ConfirmRdv/${req.params.rdvId}?success=true`,
+    cancel_url: `${DOMAIN}/ConfirmRdv/${req.params.rdvId}?success=false`,
   });
 
   res.redirect(303, session.url);
