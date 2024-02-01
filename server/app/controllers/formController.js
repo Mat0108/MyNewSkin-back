@@ -7,6 +7,7 @@ let FontBold = require("../config/Montserrat-ExtraBold-bold");
 let FontDemi = require("../config/Montserrat-Medium-bold");
 let FontRegular = require("../config/Montserrat-Regular-normal");
 const { logoBase64 } = require("../config/config");
+const { getDictionnaire, checkLanguageExist } = require("../languages/index")
 const transporter = nodemailer.createTransport({
     host: 'ex5.mail.ovh.net.',
     port: 587, 
@@ -29,6 +30,7 @@ exports.createForm = (req, res) => {
             res.json({ message: "Rêquete invalide" });
         }
         else {
+            let dictionnaire = getDictionnaire(req.body.language);
             var file = new jsPDF();
             var pageHeight = file.internal.pageSize.height || file.internal.pageSize.getHeight();
             var pageWidth = file.internal.pageSize.width || file.internal.pageSize.getWidth();
@@ -51,21 +53,21 @@ exports.createForm = (req, res) => {
             file.setFontSize("16");
             let date = new Date(form.date);
             date = `${date.getDate()>9?date.getDate():`0${date.getDate()}`}/${date.getMonth()>9?date.getMonth():`0${date.getMonth()}`}/${date.getFullYear()}`
-            file.text(`Les résultats de votre diagnostic du ${date} : `, pageWidth / 2, y,{align: 'center'})
+            file.text(dictionnaire.Diagnostic.result.replace("[X]", date) , pageWidth / 2, y,{align: 'center'})
             let i = 1;
             let selected = [form.question1,form.question2,form.question3,form.question4,form.question5]
-            DiagnosticData.map((item,pos)=>{
+            DiagnosticData[checkLanguageExist(req.body.language)].map((item,pos)=>{
                 y+= 3;
                 file.setFont("Montserrat-Medium", "bold");
                 file.setFontSize("16");
-                if(item.title === "Quelles sont vos préoccupations principales en matière de soins de la peau ?"){
-                    file.text(`Quelles sont vos préoccupations principales en matière`,x,y+6*(i+1))
+                if(pos === 1){
+                    file.text(dictionnaire.Diagnostic.concerns1,x,y+6*(i+1))
                     i++;
-                    file.text(`de soins de la peau ?`,x,y+6*(i+1))
-                }else if(item.title === "Quels produits de soins de la peau utilisez vous régulièrement ?"){
-                    file.text(`Quels produits de soins de la peau utilisez vous`,x,y+6*(i+1))
+                    file.text(dictionnaire.Diagnostic.concerns2,x,y+6*(i+1))
+                }else if(pos === 2){
+                    file.text(dictionnaire.Diagnostic.produit1,x,y+6*(i+1))
                     i++;
-                    file.text(`régulièrement ?`,x,y+6*(i+1))
+                    file.text(dictionnaire.Diagnostic.produit2,x,y+6*(i+1))
                 }else{
                     file.text(`${item.title}`,x,y+6*(i+1))
                 }
@@ -87,8 +89,8 @@ exports.createForm = (req, res) => {
             i += 4;
             file.setFont("Montserrat-Medium", "bold");
             file.setFontSize("16");
-            file.text(`Po. vous remercie de votre confiance `, pageWidth / 2, y+6*(i+1),{align: 'center'})
-     
+            file.text(dictionnaire.Diagnostic.thanks, pageWidth / 2, y+6*(i+1),{align: 'center'})
+            
             require("fs").writeFileSync('Diagnostic.pdf', file.output(), 'binary');
             const mailOptions = {
                 from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
@@ -136,6 +138,7 @@ exports.getFormByIdPdf=(req,res)=>{
             ErrorMessage(res,error,"Impossible de récuperer le formulaire")    
         }
         else {
+            let dictionnaire = getDictionnaire(req.body.language);
             var file = new jsPDF();
             var pageHeight = file.internal.pageSize.height || file.internal.pageSize.getHeight();
             var pageWidth = file.internal.pageSize.width || file.internal.pageSize.getWidth();
@@ -158,21 +161,21 @@ exports.getFormByIdPdf=(req,res)=>{
             file.setFontSize("16");
             let date = new Date(form.date);
             date = `${date.getDate()>9?date.getDate():`0${date.getDate()}`}/${date.getMonth()>9?date.getMonth():`0${date.getMonth()}`}/${date.getFullYear()}`
-            file.text(`Les résultats de votre diagnostic du ${date} : `, pageWidth / 2, y,{align: 'center'})
+            file.text(dictionnaire.Diagnostic.result.replace("[X]", date) , pageWidth / 2, y,{align: 'center'})
             let i = 1;
             let selected = [form.question1,form.question2,form.question3,form.question4,form.question5]
-            DiagnosticData.map((item,pos)=>{
+            DiagnosticData[checkLanguageExist(req.body.language)].map((item,pos)=>{
                 y+= 3;
                 file.setFont("Montserrat-Medium", "bold");
                 file.setFontSize("16");
-                if(item.title === "Quelles sont vos préoccupations principales en matière de soins de la peau ?"){
-                    file.text(`Quelles sont vos préoccupations principales en matière`,x,y+6*(i+1))
+                if(pos === 1){
+                    file.text(dictionnaire.Diagnostic.concerns1,x,y+6*(i+1))
                     i++;
-                    file.text(`de soins de la peau ?`,x,y+6*(i+1))
-                }else if(item.title === "Quels produits de soins de la peau utilisez vous régulièrement ?"){
-                    file.text(`Quels produits de soins de la peau utilisez vous`,x,y+6*(i+1))
+                    file.text(dictionnaire.Diagnostic.concerns2,x,y+6*(i+1))
+                }else if(pos === 2){
+                    file.text(dictionnaire.Diagnostic.produit1,x,y+6*(i+1))
                     i++;
-                    file.text(`régulièrement ?`,x,y+6*(i+1))
+                    file.text(dictionnaire.Diagnostic.produit2,x,y+6*(i+1))
                 }else{
                     file.text(`${item.title}`,x,y+6*(i+1))
                 }
@@ -194,7 +197,7 @@ exports.getFormByIdPdf=(req,res)=>{
             i += 4;
             file.setFont("Montserrat-Medium", "bold");
             file.setFontSize("16");
-            file.text(`Po. vous remercie de votre confiance `, pageWidth / 2, y+6*(i+1),{align: 'center'})
+            file.text(dictionnaire.Diagnostic.thanks, pageWidth / 2, y+6*(i+1),{align: 'center'})
             res.json(file.output('datauristring'))
             res.status(200)
         }

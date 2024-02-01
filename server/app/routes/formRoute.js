@@ -67,13 +67,17 @@ module.exports = (server,corsConfig) => {
      *        name: blogId
      *        schema:
      *          type: string
+     *      - in: body
+     *        name: language
+     *        schema:
+     *          type: string
      *     responses:
      *       200:
      *         description: Retourne le pdf d'un formulaire par son id
      *       401:
      *         description: Impossible de récuperer le formulaire
      */
-    server.get("/form/pdf/:formId", cors(corsConfig), formController.getFormByIdPdf);
+    server.post("/form/pdf/:formId", cors(corsConfig), formController.getFormByIdPdf);
 
     /**
      * @openapi

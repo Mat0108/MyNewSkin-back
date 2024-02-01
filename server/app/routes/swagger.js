@@ -84,6 +84,8 @@ module.exports = () => {
      *                      type: array
      *                      items:
      *                          type: number
+     *                  language:
+     *                      type: string
      *          rdv:
      *              type: object
      *              properties: 

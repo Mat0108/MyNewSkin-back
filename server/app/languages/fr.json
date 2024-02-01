@@ -1,0 +1,10 @@
+{
+    "Diagnostic":{
+        "result":"Les résultats de votre diagnostic du [X] : ",
+        "concerns1":"Quelles sont vos préoccupations principales en matière",
+        "concerns2":"de soins de la peau ?",
+        "produit1":"Quels produits de soins de la peau utilisez vous",
+        "produit2":"régulièrement ?",
+        "thanks":"Po. vous remercie de votre confiance"
+    }    
+}
