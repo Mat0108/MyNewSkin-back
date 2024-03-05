@@ -3,17 +3,18 @@ const { ErrorMessage, DiagnosticData } = require('../controllers/Message.js');
 
 describe('ErrorMessage function', () => {
   it('should return JSON with message in production environment', () => {
+    process.env.ENV_TYPE = 'prod'; 
     const mockResponse = {
       json: data => {
         expect(data).to.have.property('message');
         expect(data.message).to.equal('your_expected_message');
       }
     };
-    ErrorMessage(mockResponse, null, 'your_expected_message');
+    ErrorMessage(mockResponse, null , 'your_expected_message');
   });
 
   it('should return JSON with error in non-production environment', () => {
-    process.env.ENV_TYPE = 'dev'; // Set the environment to non-production
+    process.env.ENV_TYPE = 'dev'; 
     const mockResponse = {
       json: data => {
         expect(data).to.have.property('your_expected_error_property');
@@ -43,14 +44,12 @@ describe('DiagnosticData array', () => {
 
   it('should have the correct width for each diagnostic item', () => {
     DiagnosticData.forEach(item => {
-      // Add your width validation logic here based on your expected values
       expect(item.width).to.be.a('string');
     });
   });
 
   it('should have the correct rounded property for each diagnostic item', () => {
     DiagnosticData.forEach(item => {
-      // Add your rounded property validation logic here based on your expected values
       expect(item.rounded).to.be.a('string');
     });
   });
