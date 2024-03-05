@@ -1,13 +1,23 @@
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const sinon = require('sinon')
 const app = require('../../server.js');
+const mongoose = require('mongoose')
+const db = require("../models");
 const expect = chai.expect;
 require('dotenv').config();
 
 chai.use(chaiHttp);
-
+let callApiStub;
 describe('App', () => {
+  beforeEach(()=>{
+    callApiStub = sinon.stub(db.mongoose, 'connect').returns(Promise.resolve());
+    
+  })
+  afterEach(()=>{
+    callApiStub.restore();
+  }) 
   it('should return welcome message on / GET', (done) => {
     chai.request(app)
       .get('/')
