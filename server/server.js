@@ -1,4 +1,4 @@
-require("dotenv").config(); // Chargement des variables d'environnement depuis un fichier .env
+require("dotenv").config(); 
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -34,6 +34,7 @@ app.use(cors(corsOptions));
 const db = require("./app/models");
 db.mongoose.connect(db.url, { useNewUrlParser: true })
   .then(() => {
+  
     console.log("Connecté à la base de données! ");
     console.log(`version : ${version}`)
   })
@@ -96,6 +97,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Route simple pour la page d'accueil
 app.get("/", (req, res) => {
+  res.status(200)
   res.json({ message: `Bienvenue sur l'application Po. Version : ${version}` });
 });
 
@@ -134,7 +136,7 @@ app.post('/create-checkout-session', async (req, res) => {
 app.post('/login',
   passport.authenticate('local', {
     successRedirect: '/protected', // Redirige vers une route protégée après la connexion réussie
-    failureRedirect: '/login', // Redirige vers une page de connexion en cas d'échec de la connexion
+    failureRedirect: '/user/login', // Redirige vers une page de connexion en cas d'échec de la connexion
   })
 );
 
@@ -145,7 +147,7 @@ app.get('/protected', (req, res) => {
     res.send('Ceci est une route protégée.');
   } else {
     // L'utilisateur n'est pas authentifié, redirigez-le vers la page de connexion
-    res.redirect('/login');
+    res.redirect('/user/login');
   }
 });
 
@@ -154,3 +156,5 @@ const PORT = process.env.NODE_DOCKER_PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Le serveur écoute sur le port ${PORT}.`);
 });
+
+module.exports= app

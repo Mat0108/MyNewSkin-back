@@ -101,13 +101,11 @@ exports.userLogin = (req, res) => {
         }
         else {
             if (user.email == req.body.email) {
-                bcrypt.compare(req.body.password, user.password, (error, result) => {
+                bcrypt.compare(req.body.password, user.password, (error) => {
                     if (error) {
                         res.status(401);
                         console.log(error);
-                        
-                        res.json({ message: error })
-                        // res.json({ message: "Mot de passe incorrect" })
+                        res.json({ message: "Mot de passe incorrect" })
 
                     }
                     else {
@@ -160,7 +158,7 @@ exports.userLogin = (req, res) => {
                 res.status(401);
                 
                 res.json({ message: error })
-                // res.json({ message: "Email ou mot de passe incorrect" });
+                res.json({ message: "Email ou mot de passe incorrect" });
                 }
         }
     })
