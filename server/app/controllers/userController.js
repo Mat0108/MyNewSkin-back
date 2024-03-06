@@ -48,7 +48,6 @@ exports.userRegister = (req, res, error) => {
     bcrypt.hash(newUser.password, 10, (error, hash) => {
       if (error) {
         res.status(401);
-        console.log(error);
         res.json({ message: "Impossible de crypter le mot de passe" });
       } else {
         newUser.password = hash;
@@ -56,7 +55,6 @@ exports.userRegister = (req, res, error) => {
         newUser.save((error, user) => {
           if (error) {
             res.status(401);
-            console.log(error);
             ErrorMessage(res,error,"Requête invalide")
           
             res.json({ message: "Requête invalide" });
@@ -86,7 +84,7 @@ exports.userRegister = (req, res, error) => {
   } else {
     res.status(401);
     res.json({ message: "Mot de passe est vide" });
-    console.log(error);
+    
   }
 };
 
@@ -96,7 +94,7 @@ exports.userLogin = (req, res) => {
     User.findOne({ email: req.body.email }, (error, user) => {
         if (error) {
             res.status(500);
-            console.log(error);
+            
             res.json({ message: "Utilisateur non trouvé" });
         }
         else {
@@ -104,7 +102,7 @@ exports.userLogin = (req, res) => {
                 bcrypt.compare(req.body.password, user.password, (error) => {
                     if (error) {
                         res.status(401);
-                        console.log(error);
+                        
                         res.json({ message: "Mot de passe incorrect" })
 
                     }
@@ -115,7 +113,7 @@ exports.userLogin = (req, res) => {
                             user.save((error, user) => {
                                 if (error) {
                                     res.status(401);
-                                    console.log(error);
+                                    
                                     
                                     res.json({ message: error })
                                     res.json({ message: "Rêquete invalide" });
@@ -135,7 +133,7 @@ exports.userLogin = (req, res) => {
                                     // jwt.sign(userData, process.env.JWT_KEY, { expiresIn: "30 days" }, (error, token) => {
                                     //     if (error) {
                                     //         res.status(500);
-                                    //         console.log(error);
+                                    //         
                                     //         res.json({ message: "Impossible de générer le token" })
                                     //     }
                                     //     else {
@@ -148,7 +146,7 @@ exports.userLogin = (req, res) => {
                         }
                         else {
                             res.status(200);
-                            console.log(error);
+                            
                             res.json({ message: "Utilisateur est déjà connecté" ,user});
                         }
                     }
@@ -170,7 +168,7 @@ exports.userLogout = (req, res, error) => {
         User.findById(req.params.userId, (error, user) => {
             if (error) {
                 res.status(401);
-                console.log(error);
+                
                 res.json({ message: "Utilisateur connecté non trouvé" });
             }
             else {
@@ -180,7 +178,7 @@ exports.userLogout = (req, res, error) => {
                     user.save((error, user) => {
                         if (error) {
                             res.status(401);
-                            console.log(error);
+                            
                             res.json({ message: "Rêquete invalide" });
                         }
                         else {
@@ -198,7 +196,7 @@ exports.userLogout = (req, res, error) => {
     }
     else {
         res.status(401);
-        console.log(error);
+        
         res.json({ message: 'Utilisateur connecté non trouvé' });
     }
 }
@@ -209,7 +207,7 @@ exports.getAllUsers = (req, res) => {
     User.find({}).exec(function (error, users) {
         if (error) {
             res.status(500);
-            console.log(error);
+            
             res.json({ message: "Erreur serveur" });
         }
         else {
@@ -226,7 +224,7 @@ exports.getUserById = (req, res) => {
         if (error) {
             res.status(401);
             res.json({ message: "Utilisateur connecté non trouvé" });
-            console.log(error);
+            
         }
         else {
             res.status(200);
@@ -278,9 +276,9 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
   const { email } = req.body;
   User.findOne({ email }, (error, user) => {
     if (error || !user) {
-      res.status(404)
-      console.log(error)
-      ErrorMessage(res,error,"Utilisateur non trouvé");
+      res.status(400)
+      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"Utilisateur non trouvé"})
+
     }
 
     const resetToken = require('crypto').randomBytes(20).toString("hex");
@@ -302,7 +300,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.log(error);
+          
           res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
         }
 
@@ -332,7 +330,7 @@ exports.reinitialiserMotDePasse = (req, res) => {
   User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
     if(error || !user){
       res.status(400)
-      ErrorMessage(res,error,"Utilisateur non trouvé")
+      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"Utilisateur non trouvé"})
     }else {
       if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
         bcrypt.hash(req.body.newPassword, 10, (error, hash) => {
@@ -340,10 +338,7 @@ exports.reinitialiserMotDePasse = (req, res) => {
             res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
           }
           User.findOneAndUpdate({resetPasswordToken:req.body.resetToken},{password:hash,resetPasswordToken:null,resetPasswordExpires:null},{ new: true })
-          .then(user => {
-            if (!user) {
-              return res.status(404).json({ message: "Utilisateur non trouvé" });
-            }
+          .then(() => {
             res.status(200).json({ message: "Utilisateur est bien mis à jour", status:true });
           })
           .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
@@ -360,7 +355,7 @@ exports.getAllExpert = (req,res) =>{
   User.find({type:1},(error,users)=>{
     if(error || !users){
       res.status(400)
-      ErrorMessage(res,error,"Erreur Api")
+      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"erreur api"})
     }else {
       res.status(200).json({message: "List Expert",users});
     }

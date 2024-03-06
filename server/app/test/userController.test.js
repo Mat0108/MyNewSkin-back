@@ -156,7 +156,7 @@ describe('User Controller Tests', () => {
   });
 
   describe('GET /users', () => {
-    beforeEach(()=>{
+    afterEach(()=>{
       if(findStub){findStub.restore()}
     })
     it('should get all users successfully', async () => {
@@ -327,12 +327,12 @@ describe('User Controller Tests', () => {
     });
   
     it('should not send password reset mail if user not found', async () => {
-      findOneStub = sinon.stub(User, 'findOne').yields({message:"Utilisateur non trouvé"});
+      findOneStub = sinon.stub(User, 'findOne').yields(null, false)
       const res = await chai.request(app)
         .post('/users/forgetpassword')
         .send({ email: 'email@example.com' });
 
-      expect(res).to.have.status(404);
+      expect(res).to.have.status(400);
       expect(res.body).to.deep.equal({ message: 'Utilisateur non trouvé' });
     });
 
@@ -397,7 +397,7 @@ describe('User Controller Tests', () => {
       const res = await chai.request(app)
         .post('/users/validatetoken') 
 
-        
+
       expect(res).to.have.status(200);   
       expect(res.body).to.have.property('message').to.equal('Token valide');
       expect(res.body).to.have.property('status').to.equal(true);
@@ -430,6 +430,152 @@ describe('User Controller Tests', () => {
       expect(res).to.have.status(200);
       expect(res.body).to.have.property('message').to.equal('Token invalide');
       expect(res.body).to.have.property('status').to.equal(false);
+    })
+  });
+  describe('post /users/editpassword', () => {
+    afterEach(()=>{
+      findOneStub.restore();
+      hashStub.restore();
+      findOneAndUpdateStub.restore();
+    })
+    it('shound not reset password if user not found',async ()=>{
+      
+      findOneStub = sinon.stub(User, 'findOne').yields(false,false);
+      const res = await chai.request(app)
+      .post('/users/editpassword')
+      .send({
+        email: 'test@example.com',
+        password: 'testPassword',
+      });
+      expect(res).to.have.status(400);
+      expect(res.body).to.have.property('message').to.equal('Utilisateur non trouvé');
+    })
+    it('shound not reset password if findOne error',async ()=>{
+      findOneStub = sinon.stub(User, 'findOne').yields(true);
+      const res = await chai.request(app)
+      .post('/users/editpassword')
+      .send({
+        email: 'test@example.com',
+        password: 'testPassword',
+      });
+      expect(res).to.have.status(400);
+      expect(res.body).to.have.property('message').to.equal('Utilisateur non trouvé');
+    })
+    it('shound not reset password if token expires',async ()=>{
+      findOneStub = sinon.stub(User, 'findOne').yields(false,{_id:"mockedUserId",resetPasswordExpires:new Date(Date.now() - 3600000)});
+      const res = await chai.request(app)
+      .post('/users/editpassword')
+      .send({
+        email: 'test@example.com',
+        password: 'testPassword',
+      });
+      expect(res).to.have.status(200);
+      expect(res.body).to.have.property('message').to.equal('Token invalide');
+    })
+    it('shound not reset password if hash not work',async ()=>{
+      findOneStub = sinon.stub(User, 'findOne').yields(false,{_id:"mockedUserId",resetPasswordExpires:new Date(Date.now() + 3600000)});
+      hashStub = sinon.stub(bcrypt, 'hash').yields(true, false);
+      const res = await chai.request(app)
+      .post('/users/editpassword')
+      .send({
+        email: 'test@example.com',
+        password: 'testPassword',
+      });
+      expect(res).to.have.status(500);
+      expect(res.body).to.have.property('message').to.equal('Impossible de crypter le nouveau mot de passe');
+    })
+    it('shound not reset password if findOneAndUpdate error ',async ()=>{
+      findOneStub = sinon.stub(User, 'findOne').yields(false,{_id:"mockedUserId",resetPasswordExpires:new Date(Date.now() + 3600000)});
+      hashStub = sinon.stub(bcrypt, 'hash').yields(false, 'hashpassword');
+      findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate').rejects(new Error("Erreur serveur"));
+      const res = await chai.request(app)
+      .post('/users/editpassword')
+      .send({
+        email: 'test@example.com',
+        password: 'testPassword',
+      });
+      expect(res).to.have.status(500);
+      expect(res.body).to.have.property('message').to.equal('Erreur serveur');
+    })
+    it('shound reset password ',async ()=>{
+      findOneStub = sinon.stub(User, 'findOne').yields(false,{_id:"mockedUserId",resetPasswordExpires:new Date(Date.now() + 3600000)});
+      hashStub = sinon.stub(bcrypt, 'hash').yields(false, 'hashpassword');
+      findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate').resolves({ _id: 'mockedUserId', email:'test@example.com' });
+      const res = await chai.request(app)
+      .post('/users/editpassword')
+      .send({
+        email: 'test@example.com',
+        password: 'testPassword',
+      });
+      expect(res).to.have.status(200);
+      expect(res.body).to.have.property('message').to.equal('Utilisateur est bien mis à jour');
+    })
+  })
+
+
+  describe('get /users/expert', () => {
+    afterEach(()=> {
+      if(findStub){findStub.restore();}
+    })
+    it('should returns all experts', async () => {
+      const listuser = [{_id: 'mockedUserId1'},{_id: 'mockedUserId2'}];
+      findStub = sinon.stub(User, 'find').callsFake((query, callback) => {
+        callback(null, listuser);
+      });
+      const res = await chai.request(app)
+        .get('/users/expert') 
+      expect(res).to.have.status(200);   
+      expect(res.body).to.have.property('message').to.equal('List Expert');
+      expect(res.body).to.have.property('users').to.deep.have.members(listuser);
+    });
+    it('should not returns all experts if not found experts', async () => {
+      findStub = sinon.stub(User, 'find').yields(false,false);
+      const res = await chai.request(app)
+        .get('/users/expert') 
+
+      expect(res).to.have.status(400);   
+      expect(res.body).to.have.property('message').to.equal('erreur api');
+    });
+    it('should not returns all experts if find error', async () => {
+      findStub = sinon.stub(User, 'find').yields(true);
+      const res = await chai.request(app)
+        .get('/users/expert') 
+
+      expect(res).to.have.status(400);   
+      expect(res.body).to.have.property('message').to.equal('erreur api');
+    });
+  });
+
+  describe('get /users/activate/:userId', () => {
+    afterEach(()=> {
+      if(findByIdAndUpdateStub){findByIdAndUpdateStub.restore();}
+    })
+    it('should activate account', async () => {
+      findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate').resolves({ _id: 'mockedUserId', email:'test@example.com' });
+      const res = await chai.request(app)
+        .patch('/user/mockedUserId') 
+        .send({email:'text@exemple.com'})
+      expect(res).to.have.status(200);
+      expect(res.body).to.have.property('user').to.have.property('_id').to.equal('mockedUserId');
+      expect(res.body).to.have.property('user').to.have.property('email').to.equal('test@example.com');
+    });
+    it('shound not  activate account if user not found',async ()=>{
+      findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate').resolves(null);
+      
+      const res = await chai.request(app)
+      .patch('/user/notmockedUserId') 
+      .send({email:'text2@exemple.com'})
+    expect(res).to.have.status(404);
+    expect(res.body).to.have.property('message').to.equal('Utilisateur non trouvé');
+    })
+    it('shound not  activate account if erreur serveur',async ()=>{
+      findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate').rejects(new Error("Erreur serveur"));
+      
+      const res = await chai.request(app)
+      .patch('/user/notmockedUserId') 
+      .send({email:'text2@exemple.com'})
+    expect(res).to.have.status(500);
+    expect(res.body).to.have.property('message').to.equal('Erreur serveur');
     })
   });
 });
