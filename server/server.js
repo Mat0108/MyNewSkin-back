@@ -153,8 +153,6 @@ app.get('/protected', (req, res) => {
 
 // Configuration du port d'écoute du serveur
 const PORT = process.env.NODE_DOCKER_PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Le serveur écoute sur le port ${PORT}.`);
-});
+app.listen(PORT);
 
 module.exports= app

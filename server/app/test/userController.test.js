@@ -13,12 +13,18 @@ const mongoose = require('mongoose')
 const db = require("../models");
 let findStub, findOneStub, findByIdStub, findOneAndUpdateStub, findByIdAndUpdateStub, findByIdAndRemoveStub, saveStub, compareStub;
 let hashStub, callApiStub, nodemailerStub;
-callApiStub = sinon.stub(db.mongoose, 'connect').returns(Promise.resolve());
 
 
 
 
 describe('User Controller Tests', () => {
+  beforeEach(()=>{
+    callApiStub = sinon.stub(db.mongoose, 'connect').returns(Promise.resolve());
+    
+  })
+  afterEach(()=>{
+    callApiStub.restore();
+  }) 
   describe('POST /user/register', () => {
     afterEach(() => {
       saveStub.restore();

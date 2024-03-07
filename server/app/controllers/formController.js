@@ -22,6 +22,7 @@ const transporter = nodemailer.createTransport({
 exports.createForm = (req, res) => {
     let form = new Form(req.body);
     form.date = new Date();
+
     form.save((error, form) => {
         if (error) {
             res.status(401);
@@ -50,14 +51,12 @@ exports.createForm = (req, res) => {
             date = `${date.getDate()>9?date.getDate():`0${date.getDate()}`}/${date.getMonth()>9?date.getMonth():`0${date.getMonth()}`}/${date.getFullYear()}`
             file.text(`Les résultats de votre diagnostic du ${date} : `,x,y,'center')
             let i = 1;
-            
             DiagnosticData.map((item,pos)=>{
                 // file.setFont("Montserrat", "demi");
                 // file.setFontSize("14");
                 file.text(`${item.title}`,x,y+10*(i+1))
                 i++;
                 item.reponses.map((item2,pos2)=>{
-
                     if(req.body.selected[pos].includes(pos2)){
                         // file.setFont("Montserrat", "normal");
                         // file.setFontSize("12");
