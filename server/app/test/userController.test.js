@@ -12,7 +12,7 @@ const bcrypt = require("bcrypt");
 const mongoose = require('mongoose')
 const db = require("../models");
 let findStub, findOneStub, findByIdStub, findOneAndUpdateStub, findByIdAndUpdateStub, findByIdAndRemoveStub, saveStub, compareStub;
-let hashStub, callApiStub;
+let hashStub, callApiStub, nodemailerStub;
 callApiStub = sinon.stub(db.mongoose, 'connect').returns(Promise.resolve());
 
 
@@ -321,63 +321,64 @@ describe('User Controller Tests', () => {
     })
   });
 
+
   describe('post /users/forgetpassword', () => {
+    let transport = '';
+    beforeEach(()=>{
+      transport = {
+        name: 'testsend',
+        version: '1',
+        sendMail: function sendMail(data, callback) {
+            callback();
+        },
+        logger: false,
+    };
+      transport = nodemailer.createTransport(transport);
+    })
     afterEach(() => {
       findOneStub.restore();
+      if(nodemailerStub){nodemailerStub.restore();}
     });
   
     it('should not send password reset mail if user not found', async () => {
-      findOneStub = sinon.stub(User, 'findOne').yields(null, false)
+      findOneStub = sinon.stub(User, 'findOne').yields(false, false);
       const res = await chai.request(app)
         .post('/users/forgetpassword')
         .send({ email: 'email@example.com' });
 
       expect(res).to.have.status(400);
-      expect(res.body).to.deep.equal({ message: 'Utilisateur non trouvé' });
+      expect(res.body).to.have.property('message').to.deep.equal('Utilisateur non trouvé')
     });
 
     it('should not send password reset mail if save error', async () => {
-      findOneStub = sinon.stub(User, 'findOne').yields(null, { email: 'email@example.com', save: sinon.stub().yields({ message: 'Erreur serveur' }) });
-      
+      findOneStub = sinon.stub(User, 'findOne').yields(null, { email: 'email@example.com',save:sinon.stub(User.prototype, 'save').yields(true,null)});
       const res = await chai.request(app)
         .post('/users/forgetpassword')
         .send({ email: 'email@example.com' });
-  
-      expect(res).to.have.status(500);
-      expect(res.body).to.have.property('error').to.deep.equal({ message: 'Erreur serveur' });
+      expect(res).to.have.status(400);
+      expect(res.body).to.have.property('message').to.deep.equal('Erreur serveur');
     });
   
-    // it('should not send password reset mail if mail error', async () => {
-    //   findOneStub = sinon.stub(User, 'findOne').yields(null, { email: 'email@example.com', save: sinon.stub().yields(null,{_id:"mockeduserid",email:"test" }) });
-    //   const transport = {
-    //     sendMail: (data, callback) => {
-    //       const err = new Error('some error');
-    //       callback(err, null);
-    //     }
-    //   };
-      
-    //   sinon.stub(nodemailer, 'createTransport').returns(transport);
-      
-    //   const res = await chai.request(app)
-    //     .post('/users/forgetpassword')
-    //     .send({ email: 'email@example.com' });
-    //   console.log(res)
-    //   expect(res).to.have.status(500);
-    //   expect(res.body).to.deep.equal({ message: 'Erreur lors de l\'envoi de l\'e-mail' });
-    // });
+    it('should not send password reset mail if mail error', async () => {
+      findOneStub = sinon.stub(User, 'findOne').yields(null, { email: 'email@example.com', save: sinon.stub().yields(null,{_id:"mockeduserid",email:"test" }) });
+      nodemailerStub = sinon.stub(transport, 'sendMail').yields(true,false);
+
+      const res = await chai.request(app)
+        .post('/users/forgetpassword')
+        .send({ email: 'email@example.com' });
+      expect(res).to.have.status(500);
+      expect(res.body).to.have.property('message').to.deep.equal("Erreur lors de l'envoi de l'e-mail")});
   
-    // it('should send password reset mail ', async () => {
-    //   findOneStub.yields(null, { email: 'email@example.com', save: saveStub });
-    //   saveStub.yields(null, {}); // Simuler une sauvegarde réussie
-    //   sendMailStub.yields(null, {}); // Simuler un envoi de mail réussi
-  
-    //   const res = await chai.request(server)
-    //     .post('/users/forgetpassword')
-    //     .send({ email: 'email@example.com' });
-  
-    //   expect(res).to.have.status(200);
-    //   expect(res.body).to.deep.equal({ message: 'E-mail de réinitialisation envoyé avec succès' });
-    // });
+    it('should send password reset mail ', async () => {
+      findOneStub = sinon.stub(User, 'findOne').yields(null, { email: 'email@example.com', save: sinon.stub().yields(null,{_id:"mockeduserid",email:"email@example.com" }) });
+      nodemailerStub = sinon.stub(transport, 'sendMail').yields(false);
+
+      const res = await chai.request(app)
+        .post('/users/forgetpassword')
+        .send({ email: 'email@example.com' });
+      expect(res).to.have.status(200);
+      expect(res.body).to.deep.equal({ message: 'E-mail de réinitialisation envoyé avec succès' });
+    });
     
   });
 

@@ -276,39 +276,38 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
   const { email } = req.body;
   User.findOne({ email }, (error, user) => {
     if (error || !user) {
-      res.status(400)
-      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"Utilisateur non trouvé"})
+      res.status(400);
+      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"Utilisateur non trouvé"});
 
+    }else{
+      const resetToken = require('crypto').randomBytes(20).toString("hex");
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = Date.now() + 3600000; // Token expirera après 1 heure
+      user.save((error, user) => {
+        if (error) {
+          res.status(400);
+          res.json({ message: "Erreur serveur", error });
+        }else{
+        const mailOptions = {
+          from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
+          to: user.email,
+          subject: "Réinitialisation du mot de passe",
+          html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="http://localhost:3000/ForgotPassword/${resetToken}">Réinitialiser le mot de passe</a>`,
+        };
+  
+        transporter.sendMail(mailOptions, (error, info) => {
+          console.log("info : ",error)
+          if (error) {
+            res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
+          }else{
+            res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
+          }
+        });
+        }
+      });
     }
 
-    const resetToken = require('crypto').randomBytes(20).toString("hex");
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // Token expirera après 1 heure
-
-    user.save((error, user) => {
-      if (error) {
-        res.status(500).json({ message: "Erreur serveur", error });
-      }else{
-
-
-      const mailOptions = {
-        from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
-        to: user.email,
-        subject: "Réinitialisation du mot de passe",
-        html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="http://localhost:3000/ForgotPassword/${resetToken}">Réinitialiser le mot de passe</a>`,
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          
-          res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
-        }
-
-        console.log("E-mail de réinitialisation envoyé : " + info);
-        res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
-      });
-      }
-    });
+   
   });
 };
 
