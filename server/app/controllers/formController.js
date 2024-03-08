@@ -23,6 +23,7 @@ const transporter = nodemailer.createTransport({
 exports.createForm = (req, res) => {
     let form = new Form(req.body);
     form.date = new Date();
+
     form.save((error, form) => {
         if (error) {
             res.status(401);
