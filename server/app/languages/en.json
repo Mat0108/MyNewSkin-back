@@ -1,0 +1,11 @@
+{
+    
+    "Diagnostic": {
+        "result": "Your diagnostic results from [X] : ",
+        "concerns1": "What are your main concerns regarding",
+        "concerns2": "skincare?",
+        "produit1": "What skincare products do you use",
+        "produit2": "regularly?",
+        "thanks": "Po. thanks you for your trust"
+    }
+}
