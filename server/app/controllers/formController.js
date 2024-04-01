@@ -47,7 +47,10 @@ exports.createForm = (req, res) => {
             
             file.setFontSize("12");
             file.text("Po.",190,50);
-            file.text("po-skin.fr",176,57);
+            file.setTextColor(0,0,238)
+            file.text(176,57,'po-skin.fr');
+            file.link(175, 52, 22, 7, { url: 'https://www.po-skin.fr' });
+            file.setTextColor(0,0,0)
             file.text("contact@po-skin.net",151,64);
             
             file.setFont("Montserrat-ExtraBold", "bold");
@@ -155,7 +158,10 @@ exports.getFormByIdPdf=(req,res)=>{
             
             file.setFontSize("12");
             file.text("Po.",190,50);
-            file.text("po-skin.fr",176,57);
+            file.setTextColor(0,0,238)
+            file.text(176,57,'po-skin.fr');
+            file.link(175, 52, 22, 7, { url: 'https://www.po-skin.fr' });
+            file.setTextColor(0,0,0)
             file.text("contact@po-skin.net",151,64);
             
             file.setFont("Montserrat-ExtraBold", "bold");

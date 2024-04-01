@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-let version = "2.0.0";
+let version = "2.1.0";
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -27,7 +27,6 @@ var corsOptionsDev = {
   optionsSuccessStatus: 200
 }
 var corsOptions = process.env.ENV_TYPE == "prod" ? corsOptionsProd : process.env.ENV_TYPE == "dev" ? corsOptionsDev : null
-console.log('corsOptions : ', corsOptions)
 app.use(cors(corsOptions));
 
 // Connexion à la base de données MongoDB via Mongoose
