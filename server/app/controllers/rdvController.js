@@ -1,6 +1,21 @@
 const { ErrorMessage } = require("../config/config");
+const { ConfirmationRdv } = require("../mail/ConfirmationRdv");
 const Rdv = require("../models/rdvModel"); 
 const User = require('../models/userModel');
+const nodemailer = require('nodemailer');
+// Configurez Nodemailer pour l'envoi d'e-mails
+const transporter = nodemailer.createTransport({
+    host: 'ex5.mail.ovh.net.',
+    port: 587, 
+    secure:false,
+    auth: {
+        user: process.env.OUTLOOK_MAIL,
+        pass: process.env.OUTLOOK_PASS
+    },
+  
+  });
+
+  
 
 // Contrôleur pour créer un nouveau rendez-vous
 exports.createRdv = (req, res) => {
@@ -86,13 +101,28 @@ exports.getRdvById = async (req, res) => {
 exports.updateRdv = async (req, res) => {
   Rdv.findByIdAndUpdate(req.params.rdvId, req.body, { new: true }).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
     if (error) {
-      res.status(401);
-      console.log(error);
-      res.json({ message:error });
+        res.status(401);
+        console.log(error);
+        res.json({ message:error });
   }
   else {
-      res.status(200);
-      res.json(rdv);
+        if(req.body.hasOwnProperty('Confirmation') && req.body.Confirmation === true){
+            const mailOptions = {
+                from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
+                to: rdv.CompteClient.email, // Adresse du destinataire
+                subject: "Rendez-vous confirmé ",
+                html: ConfirmationRdv(rdv,req.body.language)
+            };
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                console.log(error);
+                } else {
+                console.log("E-mail de confirmation envoyé : " + info.response);
+                }
+            });
+        }
+        res.status(200);
+        res.json(rdv);
   }
 
   });
@@ -146,3 +176,4 @@ exports.getRdvByDate = (req,res)=>{
     
     });
 }
+

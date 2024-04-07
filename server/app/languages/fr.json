@@ -6,5 +6,47 @@
         "produit1":"Quels produits de soins de la peau utilisez vous",
         "produit2":"régulièrement ?",
         "thanks":"Po. vous remercie de votre confiance"
-    }    
+    },
+    "Mail":{
+        "welcome":"Bienvenue chez Po. !",
+        "welcome2":"Bienvenue !",
+        "bonjour":"Bonjour",
+        "textconfirmation1":"Nous sommes enchantés de vous compter parmi nos abonnés. Vous êtes maintenant connecté(e) à notre communauté et recevrez régulièrement les dernières actualités, offres exclusives et informations passionnante.",
+        "textconfirmation2":"Merci de faire partie de notre aventure !",
+        "textconfirmation3":"L’équipe Po. ",
+        "join":"rejoignez-nous :",
+        "take_rdv":"PRENDRE RENDEZ-VOUS",
+        "confirm_rdv":"Nous vous confirmons votre rendez-vous :",
+        "adress":"Adresse : ",
+        "confirm":"Comfirmer le compte",
+        "reset_password":"Réinitialiser le mot de passe"
+        
+    },
+    "Week": {
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "saturday": "Samedi",
+        "sunday": "Dimanche"
+    },
+    "Month": {
+        "january": "Janvier",
+        "february": "Février",
+        "march": "Mars",
+        "april": "Avril",
+        "may": "Mai",
+        "june": "Juin",
+        "july": "Juillet",
+        "august": "Août",
+        "september": "Septembre",
+        "october": "Octobre",
+        "november": "Novembre",
+        "december": "Décembre"
+    },
+    "expert":"Expert :",
+    "motif":"Motif :",
+    "suivi": "Consultation de suivi avec votre expert.",
+    "first_suivi": "Première consultation avec un expert."
 }

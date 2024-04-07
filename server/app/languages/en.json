@@ -7,5 +7,47 @@
         "produit1": "What skincare products do you use",
         "produit2": "regularly?",
         "thanks": "Po. thanks you for your trust"
-    }
+    },
+    "Mail":{
+        "welcome":"Welcome to Po!",
+        "welcome2":"Welcome !",
+        "bonjour":"Welcome",
+        "textconfirmation1":"We are delighted to count you among our subscribers. You are now connected to our community and will regularly receive the latest news, exclusive offers and exciting information.",
+        "textconfirmation2":"Thank you for being part of our adventure!",
+        "textconfirmation3":"The Po. team ",
+        "join":"join us :",
+        "take_rdv":"MAKE AN APPOINTMENT",
+        "confirm_rdv":"We confirm your appointment:",
+        "adress":"Address :",
+        "confirm":"Confirm account",
+        "reset_password":"Reset password"
+        
+    },
+    "Week": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+    },
+    "Month": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+    },
+    "expert":"Expert :",
+    "motif":"Motif :",
+    "suivi": "Consultation de suivi avec votre expert.",
+    "first_suivi": "Première consultation avec un expert."
 }

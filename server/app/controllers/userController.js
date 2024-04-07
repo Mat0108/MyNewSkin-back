@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { ErrorMessage } = require("./Message");
 const passport = require('passport');
+const { ConfirmationClient } = require("../mail/ConfirmationClient");
+const { PasswordForgot } = require("../mail/PasswordForgot.Js");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 // ////////////////////////////////////////////////////////////////////
@@ -41,7 +43,7 @@ const transporter = nodemailer.createTransport({
 
 // Inscription d'utilisateur
 exports.userRegister = (req, res, error) => {
-  let newUser = new User(req.body);
+  let newUser = new User(req.body.user);
 
   // Modification inscription user : si le mdp ou le mail ou le firstname et le lastname ne sont pas remplis alors pas d'inscription possible
   if (newUser.password && newUser.email && newUser.firstname && newUser.lastname) {
@@ -64,7 +66,7 @@ exports.userRegister = (req, res, error) => {
               from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
               to: user.email, // Adresse du destinataire
               subject: "Confirmation d'inscription",
-              html: `Bienvenue sur notre site Po. ! <br> Cliquez sur le lien ci-dessous pour activer votre compte : <a href="https://po-skin.fr/Activate/${user._id}">Activer le compte</a>`,
+              html: ConfirmationClient(user.firstname,user._id,req.body.language)
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -289,7 +291,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
           from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
           to: user.email,
           subject: "Réinitialisation du mot de passe",
-          html: `Pour réinitialiser votre mot de passe, cliquez sur le lien suivant : <a href="http://localhost:3000/ForgotPassword/${resetToken}">Réinitialiser le mot de passe</a>`,
+          html: PasswordForgot(resetToken,req.body.language)
         };
   
         transporter.sendMail(mailOptions, (error, info) => {
@@ -362,9 +364,27 @@ exports.activateAccount = (req,res)=>{
   User.findByIdAndUpdate(req.params.userId, {confirmed:true}, { new: true })
       .then(user => {
         if (!user) {
+          
           return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
+        }else{
+          
+        //   const mailOptions = {
+        //   from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
+        //   to: user.email, // Adresse du destinataire
+        //   subject: "Confirmation d'inscription",
+        //   html: ConfirmationClient(user.firstname,'fr')
+        // };
+        // transporter.sendMail(mailOptions, (error, info) => {
+        //   if (error) {
+        //     console.log(error);
+        //   } else {
+        //     console.log("E-mail de confirmation envoyé : " + info.response);
+        //   }
+        // });
         res.status(200).json({ message: "Utilisateur a bien été confirmé ! ", user });
+        }
+
+
       })
       .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
 }
