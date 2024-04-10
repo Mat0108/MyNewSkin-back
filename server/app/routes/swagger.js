@@ -4,6 +4,8 @@ module.exports = () => {
      * 
      *  components:
      *      schema:
+     *          email:
+     *              type: string
      *          error:
      *              message:
      *                  type: string

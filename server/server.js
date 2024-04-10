@@ -106,10 +106,14 @@ const userRoute = require("./app/routes/userRoute");
 const blogRoute = require("./app/routes/blogRoute");
 const rdvRoute = require("./app/routes/rdvRoute");
 const formRoute = require("./app/routes/formRoute")
+const newsLetterRoute = require("./app/routes/newsLetterRoute");
+const newsLetterExpertRoute = require("./app/routes/newsLetterExpertRoute");
 userRoute(app, corsOptions);
 blogRoute(app, corsOptions);
 rdvRoute(app, corsOptions);
-formRoute(app,corsOptions)
+formRoute(app,corsOptions);
+newsLetterRoute(app,corsOptions);
+newsLetterExpertRoute(app,corsOptions);
 
 const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
 
