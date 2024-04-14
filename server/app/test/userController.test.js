@@ -37,12 +37,12 @@ describe('User Controller Tests', () => {
       
       const res = await chai.request(app)
         .post('/user/register')
-        .send({
+        .send({user:{
           password: 'testPassword',
           email: 'test@example.com',
           firstname: 'John',
           lastname: 'Doe',
-        });
+    },language:'fr'});
       expect(res).to.have.status(200);
       expect(res.body).to.have.property('message').to.include('Utilisateur créé');
       expect(res.body).to.have.property('data').to.have.property('_id').to.equal('mockedUserId');
