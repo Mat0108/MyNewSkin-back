@@ -51,7 +51,7 @@ exports.createRdv = (req, res) => {
                     newRdv.save((error, rdv) => {
                         if (error) {
                             res.status(401);
-                            ErrorMessage(res,error,"Impossible de créer le rdv")
+                            res.json({message:"Impossible de créer le rdv"})
                         } else {
                             // Création d'un résumé des choix de l'utilisateur
                             const summary = {
@@ -75,7 +75,7 @@ exports.getAllRdvs = (req, res) => {
   Rdv.find({}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
     if (error) {
       res.status(401);
-      ErrorMessage(res,error,"Impossible de retourne tous les rdvs")
+      res.json({message:"Impossible de retourne tous les rdvs"})
   }
   else {
       res.status(200);
@@ -88,7 +88,7 @@ exports.getRdvById = async (req, res) => {
     Rdv.findById(req.params.rdvId).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
       if (error) {
         res.status(401);
-        ErrorMessage(res,error,"Impossible de supprimer le rdv par son id")
+        res.json({message:"Impossible de supprimer le rdv par son id"})
     }
     else {
         res.status(200);
@@ -103,7 +103,7 @@ exports.updateRdv = async (req, res) => {
     if (error) {
         res.status(401);
         console.log(error);
-        res.json({ message:error });
+        res.json({ message:"Impossible d'update le rdv" });
   }
   else {
         if(req.body.hasOwnProperty('Confirmation') && req.body.Confirmation === true){

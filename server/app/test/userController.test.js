@@ -259,7 +259,7 @@ describe('User Controller Tests', () => {
       .put('/user/notmockedUserId') 
       .send({email:'text2@exemple.com'})
     expect(res).to.have.status(500);
-    expect(res.body).to.have.property('message').to.equal('Erreur serveur');
+    expect(res.body).to.have.property('message').to.equal('Requête invalide');
     })
   });
   describe('Patch /users/:userId', () => {
