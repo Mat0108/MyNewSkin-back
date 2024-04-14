@@ -4,7 +4,7 @@
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "mocha app/test/*.test.js  -r dotenv/config"
+    "test": "mocha --require dotenv/config --dotenv-config path=.env.test app/test/*.test.js "
   },
   "keywords": [
     "nodejs",
