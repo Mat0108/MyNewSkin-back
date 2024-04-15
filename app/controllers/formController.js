@@ -27,7 +27,6 @@ exports.createForm = (req, res) => {
     form.save((error, form) => {
         if (error) {
             res.status(401);
-            console.log(error);
             res.json({ message: "Rêquete invalide" });
         }
         else {
@@ -110,16 +109,14 @@ exports.createForm = (req, res) => {
                 // attachments: [file],
                 html: "Nous vous remercions d'avoir choisi nos services pour votre diagnostic. <br> Vous trouverez votre résultat en pièce jointe. N'hésitez pas à répondre à ce mail si vous souhaitez discuter des résultats, poser des questions ou obtenir des informations supplémentaires.<br> <br>   Po. <br>   po-skin.fr<br>   contact@po-skin.net"
               };
-              require("fs").close() 
               transporter.sendMail(mailOptions, (error, info) => {
                 if (error){
-                    console.log(error);
                     res.json({message: 'Impossible de créer le formulaire'});
-                    res.sendStatus(500);
+                    res.status(400);
                 }else{
-                    // console.log('Message sent: ' + info.response);
                     res.status(200).json({"message": "Votre diagnostic a bien été envoyé par mail"})
                 };});
+                require("fs").close() 
         }})
 }
 
@@ -127,7 +124,7 @@ exports.getFormById = (req,res)=>{
     Form.findById(req.params.formId, (error, form) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer le formulaire")
+            res.json({message: "Impossible de récuperer le formulaire"})
         }
         else {
             res.status(200)
@@ -216,7 +213,7 @@ exports.getFormsByMail = (req,res)=>{
     Form.find({mail:req.body.email}, (error, forms) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer le formulaire")    
+            res.json({message:"Impossible de récuperer le formulaire"})    
         }else{
             res.status(200)
             res.json(forms)
