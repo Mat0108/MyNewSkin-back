@@ -96,6 +96,7 @@ exports.createForm = (req, res) => {
             file.text(dictionnaire.Diagnostic.thanks, pageWidth / 2, y+6*(i+1),{align: 'center'})
             
             require("fs").writeFileSync('Diagnostic.pdf', file.output(), 'binary');
+
             const mailOptions = {
                 from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
                 to: req.body.mail, // Adresse du destinataire
@@ -109,7 +110,7 @@ exports.createForm = (req, res) => {
                 // attachments: [file],
                 html: "Nous vous remercions d'avoir choisi nos services pour votre diagnostic. <br> Vous trouverez votre résultat en pièce jointe. N'hésitez pas à répondre à ce mail si vous souhaitez discuter des résultats, poser des questions ou obtenir des informations supplémentaires.<br> <br>   Po. <br>   po-skin.fr<br>   contact@po-skin.net"
               };
-
+              require("fs").close() 
               transporter.sendMail(mailOptions, (error, info) => {
                 if (error){
                     console.log(error);
