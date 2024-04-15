@@ -1,5 +1,6 @@
 name: Workflow for Codecov 
 on: [push, pull_request]
+
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -19,6 +20,8 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+        fixes: 
+          - "/app/::"
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           
