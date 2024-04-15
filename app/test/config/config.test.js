@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const { ErrorMessage, logoBase64 } = require("../config/config");
+const { ErrorMessage, logoBase64 } = require("../../config/config");
 
 describe('ErrorMessage Function', () => {
     it('should return a JSON response with the provided message in production environment', () => {

@@ -3,17 +3,17 @@ const chaiHttp = require('chai-http');
 const sinon = require('sinon');
 
 
-const userController = require('../controllers/userController');
+const userController = require('../../controllers/userController.js');
 
 const nodemailer = require('nodemailer')
 const { expect } = chai;
 
 chai.use(chaiHttp);
 
-const User = require("../models/userModel.js");
+const User = require("../../models/userModel.js");
 const bcrypt = require("bcrypt");
 const mongoose = require('mongoose')
-const db = require("../models");
+const db = require("../../models/index.js");
 let findStub, findOneStub, findByIdStub, findOneAndUpdateStub, findByIdAndUpdateStub, findByIdAndRemoveStub, saveStub, compareStub;
 let hashStub, callApiStub, nodemailerStub;
 

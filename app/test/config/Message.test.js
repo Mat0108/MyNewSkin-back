@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { ErrorMessage, DiagnosticData } = require('../controllers/Message.js');
+const { ErrorMessage, DiagnosticData } = require('../../controllers/Message.js');
 
 describe('ErrorMessage function', () => {
   it('should return JSON with message in production environment', () => {
