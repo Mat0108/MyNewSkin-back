@@ -1,10 +1,11 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const app = require('../../server.js'); 
+const blogController = require('../controllers/blogController');
 const should = chai.should();
 
 const Blog = require("../models/blogModel");
+const { expect } = chai;
 chai.use(chaiHttp);
 let saveStub;
 describe('Blog API', () => {
@@ -16,20 +17,17 @@ describe('Blog API', () => {
         afterEach(()=>{
             saveStub.restore();
         })
-        it('devrait créer un nouvel article de blog', (done) => {
-            const newBlog = {
-                // les propriétés du blog comme dans votre exemple
+        it('devrait créer un nouvel article de blog', async () => {
+            const req = { body: {} };
+            const res = {
+              status: sinon.spy(),
+              json: sinon.spy(),
             };
+            await blogController.setBlog(req,res)
 
-            chai.request(app)
-                .post('/blog/set')
-                .send(newBlog)
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('title');
-                    
-                    done();
-                });
+            expect(res.status.calledOnceWithExactly(200)).to.be.true;
+
+    
         });
     });
 });

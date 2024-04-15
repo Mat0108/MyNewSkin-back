@@ -3,7 +3,6 @@ const sinon = require('sinon');
 const rdvController = require('../controllers/rdvController');
 const Rdv = require('../models/rdvModel');
 const User = require('../models/userModel');
-const app = require('../../server')
 const { expect } = chai;
 let findOne, findById, findByIdAndUpdate, find, saveRdv, deleteOne; 
 

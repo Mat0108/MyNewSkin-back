@@ -42,7 +42,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Inscription d'utilisateur
-exports.userRegister = (req, res, error) => {
+exports.userRegister = (req, res) => {
   let newUser = new User(req.body.user);
 
   // Modification inscription user : si le mdp ou le mail ou le firstname et le lastname ne sont pas remplis alors pas d'inscription possible
@@ -157,7 +157,6 @@ exports.userLogin = (req, res) => {
             else {
                 res.status(401);
                 
-                res.json({ message: error })
                 res.json({ message: "Email ou mot de passe incorrect" });
                 }
         }
@@ -176,7 +175,6 @@ exports.userLogout = (req, res, error) => {
             else {
                 if (user.connected) {
                     user.connected = false;
-
                     user.save((error, user) => {
                         if (error) {
                             res.status(401);
@@ -197,7 +195,6 @@ exports.userLogout = (req, res, error) => {
     }
     else {
         res.status(401);
-        
         res.json({ message: 'Utilisateur connecté non trouvé' });
     }
 }
@@ -234,40 +231,67 @@ exports.getUserById = (req, res) => {
 
 // Modifier tous les informations d'un utilisateur
 exports.updateUser = (req, res) => {
-    User.findOneAndUpdate({ _id: req.params.userId }, req.body, { new: true, runValidators: true })
-      .then(user => {
-        if (!user) {
-          return res.status(404).json({ message: "Utilisateur non trouvé" });
+    User.findOneAndUpdate({ _id: req.params.userId }, req.body, { new: true, runValidators: true }, (error, user) => {
+        if (error) {
+            res.status(400);
+            res.json({ message: "Requête invalide" });
         }
-        res.status(200).json({ message: "Utilisateur est bien mis à jour", user });
-      })
-      .catch(error => res.status(500).json({ message: "Requête invalide", error }));
+        else {
+            if(!Object.keys(user).length){
+                res.status(404)
+                res.json({ message: "Utilisateur non trouvé" });
+
+            }else{
+
+              res.status(200);
+              res.json({ message: "Utilisateur est bien mis à jour", user });
+            }
+        }
+    })
 };
   
 
 /// Supprimer l'utilisateur
 exports.deleteUser = (req, res) => {
-    User.findByIdAndRemove(req.params.userId)
-      .then(user => {
-        if (!user) {
-          return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-        res.status(200).json({ message: "Utilisateur est bien supprimé", user });
-      })
-      .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+    User.findByIdAndRemove(req.params.userId,(error, user) => {
+      if (error) {
+          res.status(400);
+          res.json({ message: "Requête invalide" });
+      }
+      else {
+          if(!Object.keys(user).length){
+              res.status(404)
+              res.json({ message: "Utilisateur non trouvé" });
+
+          }else{
+
+            res.status(200);
+            res.json({ message: "Utilisateur est bien été supprimé", user });
+          }
+      }
+  });
 };
   
 
 // Modifier quelques informations de l'utilisateur
 exports.patchUser = (req, res) => {
-    User.findByIdAndUpdate(req.params.userId, req.body, { new: true })
-      .then(user => {
-        if (!user) {
-          return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-        res.status(200).json({ message: "Utilisateur est bien mis à jour", user });
-      })
-      .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+    User.findByIdAndUpdate(req.params.userId, req.body, { new: true },(error, user) => {
+      if (error) {
+          res.status(400);
+          res.json({ message: "Requête invalide" });
+      }
+      else {
+          if(!Object.keys(user).length){
+              res.status(404)
+              res.json({ message: "Utilisateur non trouvé" });
+
+          }else{
+
+            res.status(200);
+            res.json({ message: "Utilisateur est bien été mise à jour", user });
+          }
+      }
+  })
 };
   
 // Fonction pour demander la réinitialisation du mot de passe
@@ -276,7 +300,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
   User.findOne({ email }, (error, user) => {
     if (error || !user) {
       res.status(400);
-      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"Utilisateur non trouvé"});
+      res.json({ message:"Utilisateur non trouvé"});
 
     }else{
       const resetToken = require('crypto').randomBytes(20).toString("hex");
@@ -285,7 +309,7 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
       user.save((error, user) => {
         if (error) {
           res.status(400);
-          res.json({ message: "Erreur serveur", error });
+          res.json({ message: "Erreur serveur"});
         }else{
         const mailOptions = {
           from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
@@ -293,13 +317,13 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
           subject: "Réinitialisation du mot de passe",
           html: PasswordForgot(resetToken,req.body.language)
         };
-  
         transporter.sendMail(mailOptions, (error, info) => {
-          console.log("info : ",error)
           if (error) {
-            res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail", error });
+            res.status(400)
+            res.json({ message: "Erreur lors de l'envoi de l'e-mail" });
           }else{
-            res.status(200).json({ message: "E-mail de réinitialisation envoyé avec succès" });
+            res.status(200)
+            res.json({ message: "E-mail de réinitialisation envoyé avec succès" });
           }
         });
         }
@@ -313,12 +337,15 @@ exports.demandeReinitialisationMotDePasse = (req, res) => {
 exports.checkToken = (req,res)=>{
   User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
     if(error || !user){ 
-      res.status(200).json({message: "Token invalide",status:false});
+      res.status(200)
+      res.json({message: "Token invalide",status:false});
     }else {
       if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
-        res.status(200).json({message: "Token valide",status:true,id:user._id});
+        res.status(200)
+        res.json({message: "Token valide",status:true,id:user._id});
       }else{
-        res.status(200).json({message: "Token invalide",status:false});
+        res.status(200)
+        res.json({message: "Token invalide",status:false});
       }
       }
   })
@@ -328,22 +355,30 @@ exports.reinitialiserMotDePasse = (req, res) => {
   User.findOne({resetPasswordToken:req.body.resetToken},(error, user) => {
     if(error || !user){
       res.status(400)
-      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"Utilisateur non trouvé"})
+      res.json({ message:"Utilisateur non trouvé"})
     }else {
       if(new Date(user.resetPasswordExpires).getTime() > new Date().getTime()){
         bcrypt.hash(req.body.newPassword, 10, (error, hash) => {
           if (error) {
-            res.status(500).json({ message: "Impossible de crypter le nouveau mot de passe", error });
+            res.status(500)
+            res.json({ message: "Impossible de crypter le nouveau mot de passe" });
+          }else{
+            User.findOneAndUpdate({resetPasswordToken:req.body.resetToken},{password:hash,resetPasswordToken:null,resetPasswordExpires:null},{ new: true },(error, user) => {
+              if (error) {
+                res.status(400)
+                res.json({ message: "Erreur serveur" });
+              }else{
+                res.status(200)
+                res.json({ message: "Mot de passe réinitialisé avec succès" });
+              }
+            });
           }
-          User.findOneAndUpdate({resetPasswordToken:req.body.resetToken},{password:hash,resetPasswordToken:null,resetPasswordExpires:null},{ new: true })
-          .then(() => {
-            res.status(200).json({ message: "Utilisateur est bien mis à jour", status:true });
-          })
-          .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+          
         });  
       
       }else{
-        res.status(200).json({message: "Token invalide",status:false});
+        res.status(200)
+        res.json({message: "Token invalide",status:false});
       }
       }
   })
@@ -353,38 +388,41 @@ exports.getAllExpert = (req,res) =>{
   User.find({type:1},(error,users)=>{
     if(error || !users){
       res.status(400)
-      res.json(process.env.ENV_TYPE === "prod" ? error : { message:"erreur api"})
+      res.json({ message:"erreur api"})
     }else {
-      res.status(200).json({message: "List Expert",users});
+      res.status(200)
+      res.json({message: "List Expert",users});
     }
   })
 }
 
 exports.activateAccount = (req,res)=>{
-  User.findByIdAndUpdate(req.params.userId, {confirmed:true}, { new: true })
-      .then(user => {
-        if (!user) {
-          
-          return res.status(404).json({ message: "Utilisateur non trouvé" });
+  User.findByIdAndUpdate(req.params.userId, {confirmed:true}, { new: true },(error, user) => {
+    if (error) {
+        res.status(400);
+        res.json({ message: "Requête invalide" });
+    }
+    else {
+        if(!Object.keys(user).length){
+            res.status(404)
+            res.json({ message: "Utilisateur non trouvé" });
+
         }else{
-          
-        //   const mailOptions = {
-        //   from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
-        //   to: user.email, // Adresse du destinataire
-        //   subject: "Confirmation d'inscription",
-        //   html: ConfirmationClient(user.firstname,'fr')
-        // };
-        // transporter.sendMail(mailOptions, (error, info) => {
-        //   if (error) {
-        //     console.log(error);
-        //   } else {
-        //     console.log("E-mail de confirmation envoyé : " + info.response);
-        //   }
-        // });
-        res.status(200).json({ message: "Utilisateur a bien été confirmé ! ", user });
+          //   const mailOptions = {
+          //   from: process.env.OUTLOOK_MAIL, // Adresse de l'expéditeur
+          //   to: user.email, // Adresse du destinataire
+          //   subject: "Confirmation d'inscription",
+          //   html: ConfirmationClient(user.firstname,'fr')
+          // };
+          // transporter.sendMail(mailOptions, (error, info) => {
+          //   if (error) {
+          //     console.log(error);
+          //   } else {
+          //     console.log("E-mail de confirmation envoyé : " + info.response);
+          //   }
+          // });
+          res.status(200);
+          res.json({ message: "Utilisateur a bien été confirmé", user });
         }
-
-
-      })
-      .catch(error => res.status(500).json({ message: "Erreur serveur", error }));
+  }})
 }
