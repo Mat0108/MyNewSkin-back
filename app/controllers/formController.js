@@ -1,7 +1,7 @@
 const Form = require("../models/formModel");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { DiagnosticData } = require("./Message");
+const { DiagnosticData } = require("../config/DiagnosticData");
 const {jsPDF}= require("jspdf");
 let FontBold = require("../config/Montserrat-ExtraBold-bold");
 let FontDemi = require("../config/Montserrat-Medium-bold");

@@ -2,7 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
 const blogController = require('../../controllers/blogController');
-const should = chai.should();
+
 
 const Blog = require("../../models/blogModel");
 const { expect } = chai;

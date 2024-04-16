@@ -2,7 +2,7 @@ codecov:
   require_ci_to_pass: true
   token: 97303993-4333-465d-af94-52f8c862fe3c
 fixes:
-  - "::app/"
+  - ::app/
 comment:
   behavior: default
   layout: reach,diff,flags,tree,reach

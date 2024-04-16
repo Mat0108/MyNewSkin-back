@@ -23,8 +23,7 @@ exports.ConfirmationRdv = (rdv,language) => {
 
 
     
-    return `
-        <div style="width: 100%; height: 100%; display: flex;font-size:18px; text-color:#000000;">
+    return `<div style="width: 100%; height: 100%; display: flex;font-size:18px; text-color:#000000;">
             <div style="width:50%; display: grid; background-color: #E4DDD3; border-radius: 50px 0px 0px 50px;">
                 <table align="center" width="75%">
                     <tr>

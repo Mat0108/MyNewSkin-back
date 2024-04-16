@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const passport = require('passport');
 const { ConfirmationClient } = require("../mail/ConfirmationClient");
-const { PasswordForgot } = require("../mail/PasswordForgot.Js");
+const { PasswordForgot } = require("../mail/PasswordForgotMail");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 // ////////////////////////////////////////////////////////////////////
