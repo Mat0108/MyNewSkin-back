@@ -3,7 +3,9 @@ exports.logoBase64 = ()=>{
 }
 exports.protectedRoute = ()=>{
     return {
-        unprotected:["/user/register","/user/login"],
-        protected:["/user/*"]
+        unprotectedRoutes:["/user/register","/user/login","/form/create","/newsletterexpert/set","/newsletter/set","/succes","/erreur","/login"],
+        protectedRoutes:["/blog/set","/blog/get/:blogId","/protected"],
+        unprotectedPaths:["blog"],
+        protectedPaths:["user","form","rdv"]
     }
 }
