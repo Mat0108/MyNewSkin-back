@@ -1,7 +1,7 @@
 const Form = require("../models/formModel");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { DiagnosticData, ErrorMessage } = require("./Message");
+const { DiagnosticData } = require("./Message");
 const {jsPDF}= require("jspdf");
 let FontBold = require("../config/Montserrat-ExtraBold-bold");
 let FontDemi = require("../config/Montserrat-Medium-bold");
@@ -137,7 +137,7 @@ exports.getFormByIdPdf=(req,res)=>{
     Form.findById(req.params.formId, (error, form) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer le formulaire")    
+            res.json({message: "Impossible de récuperer le formulaire"})    
         }
         else {
             let dictionnaire = getDictionnaire(req.body.language);

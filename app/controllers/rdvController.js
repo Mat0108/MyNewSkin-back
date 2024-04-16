@@ -1,4 +1,4 @@
-const { ErrorMessage } = require("../config/config");
+
 const { ConfirmationRdv } = require("../mail/ConfirmationRdv");
 const Rdv = require("../models/rdvModel"); 
 const User = require('../models/userModel');

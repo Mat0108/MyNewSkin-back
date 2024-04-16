@@ -1,6 +1,5 @@
 // Importation du modèle de données du blog
 const Blog = require("../models/blogModel");
-const { ErrorMessage } = require("../config/config");
 // Route pour créer un nouvel article de blog
 exports.setBlog  = (req, res) => {
     // Création d'une nouvelle instance de Blog avec les données du corps de la requête
