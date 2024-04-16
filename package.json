@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "nyc --reporter=lcov mocha --require dotenv/config --dotenv-config path=.env.test app/test/*/*.test.js",
+    "test:local": "nyc mocha --require dotenv/config --dotenv-config path=.env.local app/test/*/*.test.js",
     "coverage": "codecov"
   },
   "keywords": [
