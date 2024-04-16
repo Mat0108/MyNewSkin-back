@@ -4,7 +4,8 @@
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "nyc mocha --require dotenv/config --dotenv-config path=.env.test app/test/*/*.test.js"
+    "test": "nyc --reporter=lcov mocha --require dotenv/config --dotenv-config path=.env.test app/test/*/*.test.js",
+    "coverage": "codecov"
   },
   "keywords": [
     "nodejs",
@@ -18,6 +19,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "chai-http": "^4.4.0",
+    "codecov": "^3.8.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",

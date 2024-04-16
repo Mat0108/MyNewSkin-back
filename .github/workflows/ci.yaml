@@ -17,6 +17,9 @@ jobs:
         env: 
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
         run: npm run test
+
+      - name: Run coverage
+        run: npm run coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         env:
