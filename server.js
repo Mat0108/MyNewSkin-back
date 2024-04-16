@@ -12,6 +12,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const User = require('./app/models/userModel');
 const bcrypt = require("bcrypt");
+const { protectedRoute } = require("./app/config/config");
 // Middleware pour analyser les requêtes au format JSON
 app.use(express.json());
 
@@ -67,14 +68,10 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions)
 
 
 passport.use(new LocalStrategy({usernameField: 'email'},(email, password, done) => {
-  console.log(email, password)
   User.findOne({ email: email  }, (err, user) => {
       if (err) return done(err);
       if (!user) return done(null, false, { message: 'Incorrect email or password.' });
-      console.log(user.password)
       bcrypt.compare(password, user.password, (err, isMatch) => {
-        console.log("err : ",err)
-        console.log("isMatch : ",isMatch)  
         if (err) return done(err);
           if (isMatch) {
               return done(null, user,{ message: 'Logged In Successfully'});
@@ -99,6 +96,44 @@ app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: f
 // Utilisez Passport comme middleware d'authentification
 app.use(passport.initialize());
 app.use(passport.session());
+
+function ensureAuthenticated(req, res, next) {
+  const path = req.path;
+  let routes = protectedRoute();
+  // Check if the path is one of the unprotected paths
+  if (routes.unprotectedRoutes.some(unprotectedPath => path === unprotectedPath)) {
+      return next();
+  }else if (routes.protectedRoutes.some(protectedPath => path === protectedPath)) {
+    console.log("protectedPath")
+    if (req.isAuthenticated()) {
+      return next();
+    } else {
+      console.log("unprotectedPath")
+      res.redirect('/login');
+    }
+  }
+  // Check if the path matches the protected pattern
+  routes.unprotectedPaths.map(path => {
+    const unprotectedPattern = new RegExp("^/" + path + "/.*$"); // Regex to match anything under /path/
+    if (unprotectedPattern.test(path)) {
+        return next();
+    } 
+  })
+  routes.protectedPaths.map(path => {
+    const protectedPattern = new RegExp("^/" + path + "/.*$");
+    if (protectedPattern.test(path)) {
+        if (req.isAuthenticated()) {
+            return next();
+        } else {
+            res.redirect('/login');
+        }
+    } 
+  
+  });
+}
+// Middleware pour la gestion de sessions
+app.use(ensureAuthenticated);
+
 
 // Serveur Swagger à l'URL "/api-docs"
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -132,7 +167,7 @@ app.get('/protected', (req, res) => {
     res.send('Ceci est une route protégée.');
   } else {
     // L'utilisateur n'est pas authentifié, redirigez-le vers la page de connexion
-    res.redirect('/login');
+    res.redirect('/needLogin');
   }
 });
 
