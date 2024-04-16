@@ -4,7 +4,7 @@
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --require dotenv/config --dotenv-config path=.env.test app/test/*/*.test.js"
+    "test": "nyc mocha --require dotenv/config --dotenv-config path=.env.test app/test/*/*.test.js"
   },
   "keywords": [
     "nodejs",
@@ -29,6 +29,7 @@
     "mongoose": "^5.8.10",
     "nodejs-nodemailer-outlook": "^1.2.4",
     "nodemailer": "^6.9.6",
+    "nyc": "^15.1.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
