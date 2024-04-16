@@ -1,4 +1,4 @@
-const { ErrorMessage } = require("../config/config");
+
 const { ConfirmationRdv } = require("../mail/ConfirmationRdv");
 const Rdv = require("../models/rdvModel"); 
 const User = require('../models/userModel');
@@ -19,11 +19,9 @@ const transporter = nodemailer.createTransport({
 
 // Contrôleur pour créer un nouveau rendez-vous
 exports.createRdv = (req, res) => {
-    console.log('req : ', req.body)
     User.findOne({ email: req.body.CompteClient }, (error, CompteClient) => {
         if (error || CompteClient == null) {
             res.status(500);
-            console.log(error);
             res.json({ message: "CompteClient non trouvé" });
         } else {
             // Récupération des informations sélectionnées par l'utilisateur depuis le corps de la requête
@@ -36,7 +34,6 @@ exports.createRdv = (req, res) => {
             User.findOne({ email: req.body.CompteExpert }, (error, CompteExpert) => {
                 if (error || CompteExpert == null) {
                     res.status(500);
-                    console.log(error);
                     res.json({ message: "CompteExpert non trouvé" });
                 } else {
                     // Création du nouveau rendez-vous avec les informations sélectionnées
@@ -102,7 +99,6 @@ exports.updateRdv = async (req, res) => {
   Rdv.findByIdAndUpdate(req.params.rdvId, req.body, { new: true }).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
     if (error) {
         res.status(401);
-        console.log(error);
         res.json({ message:"Impossible d'update le rdv" });
   }
   else {
@@ -140,14 +136,12 @@ exports.getRdvbyName = (req,res)=>{
     User.find({ email: req.body.Compte }, (error, Compte) => {
         if(error || Compte == null){
             res.status(401);
-            console.log(error);
             res.json({ message:error });
         }else{
             Rdv.find({$or:[{CompteClient:Compte},{CompteExpert:Compte}]}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
                 if (error) {
                   res.status(401);
-                  console.log(error);
-                  res.json({ message:error });
+                  res.json({ message:"Rdv non trouvé" });
               }
               else {
                   res.status(200);
@@ -166,8 +160,7 @@ exports.getRdvByDate = (req,res)=>{
     Rdv.find({DateDebut:{$gte:new Date(req.body.Date),$lt:date}}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
         if (error) {
             res.status(401);
-            console.log(error);
-            res.json({ message:error });
+            res.json({ message:"Rdv non trouvé" });
         }
         else {
             res.status(200);

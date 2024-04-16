@@ -2,12 +2,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon')
+process.env.NODE_ENV = 'test'
 const app = require('../../server.js');
 const mongoose = require('mongoose')
 const db = require("../models");
 const expect = chai.expect;
 const passport = require('passport');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.test' });
 
 chai.use(chaiHttp);
 let callApiStub, passportStub;
@@ -24,7 +25,7 @@ describe('App', () => {
       .get('/')
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.body.message).to.equal('Bienvenue sur l\'application Po. Version : 1.9.0');
+        expect(res.body.message).to.equal('Bienvenue sur l\'application Po. Version : 2.1.0');
         done();
       });
   });

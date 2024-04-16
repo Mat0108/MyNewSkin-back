@@ -1,6 +1,5 @@
 // Importation du modèle de données du blog
 const Blog = require("../models/blogModel");
-const { ErrorMessage } = require("../config/config");
 // Route pour créer un nouvel article de blog
 exports.setBlog  = (req, res) => {
     // Création d'une nouvelle instance de Blog avec les données du corps de la requête
@@ -19,7 +18,7 @@ exports.setBlog  = (req, res) => {
         if (error) {
             // En cas d'erreur, renvoyer une réponse avec le statut 401 (Non autorisé) et un message d'erreur
             res.status(401);
-            ErrorMessage(res,error,"Impossible de créer un blog")
+            res.json({message:"Impossible de créer un blog"})
         }
         else {
             // En cas de succès, renvoyer une réponse avec le statut 200 (OK) et les données du blog créé
@@ -32,15 +31,15 @@ exports.setBlog  = (req, res) => {
 // Route pour récupérer un article de blog par ID
 exports.getBlog = (req, res) => {
     // Recherche d'un article de blog par son identifiant unique dans la base de données
-    Blog.findById(req.params.blogId, (error, blogs) => {
+    Blog.findById(req.params.blogId, (error, blog) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer tous les blogs")
+            res.json({message:"Impossible de récuperer le blog"})
         
         }
         else {
             res.status(200);
-            res.json({message:"Retourne tous les blogs",blogs});
+            res.json({message:"Retourne le blog",blog});
         }
     })
 }
@@ -51,7 +50,7 @@ exports.getBlogByField = (req, res) => {
     Blog.find({altimagepresentation:req.params.altId}, (error, blog) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer le blog")
+            res.json({message:"Impossible de récuperer le blog"})
         
         }
         else {
@@ -67,7 +66,7 @@ exports.getAllBlog = (req, res) => {
     Blog.find({}, (error, blog) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer le blog")
+            res.json({message:"Impossible de récuperer les blogs"})
         }
         else {
             res.status(200);
@@ -79,9 +78,17 @@ exports.getAllBlog = (req, res) => {
 // Route pour supprimer un article de blog par ID
 exports.deleteBlog = (req, res) => {
     // Suppression d'un article de blog par son identifiant unique
-    Blog.deleteOne({ _id: req.params.blogId })
-        .then(result => res.status(200).json({ message: "le blog est bien supprimé", result }))
-        .catch((error) => res.status(401).json({ message: "Impossible de supprimer le blog " }))
+    Blog.deleteOne({ _id: req.params.blogId }, (error, blog) => {
+        if (error) {
+            res.status(401);
+            res.json({message:"Impossible de supprimer le blog"})
+        
+        }
+        else {
+            res.status(200);
+            res.json({message:"le blog est bien supprimé"});
+        }
+    })
 };
 
 // Route pour rechercher des articles de blog par titre (utilisation d'expressions régulières pour la recherche)
@@ -90,7 +97,7 @@ exports.searchBlog = (req,res) =>{
     Blog.find( { "title": { "$regex": `${req.params.searchId}`, "$options": "i" } }, (error, blog) => {
         if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Impossible de récuperer tous le blog")
+            res.json({message:"Impossible de récuperer tous le blog"})
         
         }
         else {
