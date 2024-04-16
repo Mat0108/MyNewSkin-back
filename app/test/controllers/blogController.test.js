@@ -1,10 +1,10 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const blogController = require('../controllers/blogController');
-const should = chai.should();
+const blogController = require('../../controllers/blogController');
 
-const Blog = require("../models/blogModel");
+
+const Blog = require("../../models/blogModel");
 const { expect } = chai;
 chai.use(chaiHttp);
 let saveStub, findByIdStub, findStub, deleteOneStub;

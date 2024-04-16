@@ -3,8 +3,8 @@ const chaiHttp = require('chai-http');
 
 const sinon = require('sinon');
 const expect = chai.expect;
-const Form = require("../models/formModel");
-const FormController = require("../controllers/formController");
+const Form = require("../../models/formModel");
+const FormController = require("../../controllers/formController");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose")
 const fs = require("fs")

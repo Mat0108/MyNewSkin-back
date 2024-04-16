@@ -1,4 +1,4 @@
-const { ErrorMessage } = require("../config/config");
+
 const { ConfirmationRdv } = require("../mail/ConfirmationRdv");
 const Rdv = require("../models/rdvModel"); 
 const User = require('../models/userModel');
@@ -141,7 +141,7 @@ exports.getRdvbyName = (req,res)=>{
             Rdv.find({$or:[{CompteClient:Compte},{CompteExpert:Compte}]}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
                 if (error) {
                   res.status(401);
-                  res.json({ message:error });
+                  res.json({ message:"Rdv non trouvé" });
               }
               else {
                   res.status(200);
@@ -160,7 +160,7 @@ exports.getRdvByDate = (req,res)=>{
     Rdv.find({DateDebut:{$gte:new Date(req.body.Date),$lt:date}}).populate("CompteClient").populate("CompteExpert").exec(function(error,rdv){
         if (error) {
             res.status(401);
-            res.json({ message:error });
+            res.json({ message:"Rdv non trouvé" });
         }
         else {
             res.status(200);

@@ -1,10 +1,9 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const { ErrorMessage } = require("./Message");
 const passport = require('passport');
 const { ConfirmationClient } = require("../mail/ConfirmationClient");
-const { PasswordForgot } = require("../mail/PasswordForgot.Js");
+const { PasswordForgot } = require("../mail/PasswordForgotMail");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 // ////////////////////////////////////////////////////////////////////
@@ -57,8 +56,6 @@ exports.userRegister = (req, res) => {
         newUser.save((error, user) => {
           if (error) {
             res.status(401);
-            ErrorMessage(res,error,"Requête invalide")
-          
             res.json({ message: "Requête invalide" });
           } else {
             // Envoi de l'e-mail de confirmation
