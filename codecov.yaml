@@ -1,0 +1,22 @@
+codecov:
+  token: 97303993-4333-465d-af94-52f8c862fe3c
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: null
+        base: auto
+        flags: 
+          - unittests
+    patch:
+      default:
+        target: auto
+        threshold: null
+        base: auto
+        flags:
+          - unittests
+
+ignore:
+  - "node_modules/"
