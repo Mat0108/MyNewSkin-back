@@ -10,7 +10,8 @@ let version = "2.1.0";
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-
+const User = require('./app/models/userModel');
+const bcrypt = require("bcrypt");
 // Middleware pour analyser les requêtes au format JSON
 app.use(express.json());
 
@@ -64,26 +65,33 @@ const swaggerOptions = {
 // Génération de la spécification Swagger
 const swaggerSpec = swaggerJSDoc(swaggerOptions)
 
-// Configurez Passport pour l'authentification
-passport.use(new LocalStrategy(
-  (username, password, done) => {
-    // Ici, vous devrez mettre en place la logique d'authentification en fonction de votre modèle d'utilisateur
-    // Par exemple, vérifiez si l'utilisateur existe dans la base de données et si le mot de passe est correct.
-    if (username === 'utilisateur' && password === 'motdepasse') {
-      return done(null, { username: 'utilisateur' });
-    } else {
-      return done(null, false, { message: 'Nom d\'utilisateur ou mot de passe incorrect' });
-    }
-  }
-));
 
+passport.use(new LocalStrategy({usernameField: 'email'},(email, password, done) => {
+  console.log(email, password)
+  User.findOne({ email: email  }, (err, user) => {
+      if (err) return done(err);
+      if (!user) return done(null, false, { message: 'Incorrect email or password.' });
+      console.log(user.password)
+      bcrypt.compare(password, user.password, (err, isMatch) => {
+        console.log("err : ",err)
+        console.log("isMatch : ",isMatch)  
+        if (err) return done(err);
+          if (isMatch) {
+              return done(null, user,{ message: 'Logged In Successfully'});
+          } else {
+              return done(null, false, { message: 'Incorrect email or password.' });
+          }
+      });
+  });
+}));
 passport.serializeUser((user, done) => {
-  done(null, user.username);
+  done(null, user.id);
 });
 
-passport.deserializeUser((username, done) => {
-  // Ici, vous devrez récupérer l'utilisateur à partir de la base de données en utilisant l'identifiant d'utilisateur (username).
-  done(null, { username });
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+      done(err, user);
+  });
 });
 
 // Middleware pour la gestion de sessions
@@ -100,6 +108,34 @@ app.get("/", (req, res) => {
   res.status(200)
   res.json({ message: `Bienvenue sur l'application Po. Version : ${version}` });
 });
+
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/succes',
+  failureRedirect: '/erreur'
+}));
+app.get('/login', (req, res) => {
+  res.send('Login Page');
+});
+app.get('/succes', (req, res) => {
+  res.send('succes Page');
+});
+app.get('/erreur', (req, res) => {
+  res.send('Erreur Page');
+});
+
+
+// Ajoutez une route protégée à laquelle seuls les utilisateurs authentifiés auront accès
+app.get('/protected', (req, res) => {
+  console.log(req.isAuthenticated())
+  if (req.isAuthenticated()) {
+    // L'utilisateur est authentifié, il peut accéder à cette route
+    res.send('Ceci est une route protégée.');
+  } else {
+    // L'utilisateur n'est pas authentifié, redirigez-le vers la page de connexion
+    res.redirect('/login');
+  }
+});
+
 
 // Import et configuration des routes de l'application
 const userRoute = require("./app/routes/userRoute");
@@ -138,23 +174,7 @@ app.post('/create-checkout-session/:rdvId', async (req, res) => {
 });
 
 // Ajoutez une route pour gérer la connexion (authentification)
-app.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/protected', // Redirige vers une route protégée après la connexion réussie
-    failureRedirect: '/user/login', // Redirige vers une page de connexion en cas d'échec de la connexion
-  })
-);
 
-// Ajoutez une route protégée à laquelle seuls les utilisateurs authentifiés auront accès
-app.get('/protected', (req, res) => {
-  if (req.isAuthenticated()) {
-    // L'utilisateur est authentifié, il peut accéder à cette route
-    res.send('Ceci est une route protégée.');
-  } else {
-    // L'utilisateur n'est pas authentifié, redirigez-le vers la page de connexion
-    res.redirect('/user/login');
-  }
-});
 
 // Configuration du port d'écoute du serveur
 const PORT = process.env.NODE_DOCKER_PORT || 8080;
