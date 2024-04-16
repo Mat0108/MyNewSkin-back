@@ -4,9 +4,14 @@ const rdvController = require('../../controllers/rdvController');
 const Rdv = require('../../models/rdvModel');
 const User = require('../../models/userModel');
 const { expect } = chai;
-let findOne, findById, findByIdAndUpdate, find, saveRdv, deleteOne; 
+let findOne, findById, findByIdAndUpdate, find, Userfind, saveRdv, deleteOne; 
 
-
+let MockedRdv={
+  id:"some_id",
+  CompteClient:{firstname:"some_firstname",lastname:"some_lastname",email:"some_email"},
+  CompteExpert:{firstname:"some_firstname",lastname:"some_lastname",email:"some_email"},
+  DateDebut:"2023-01-01"
+}
 describe('Rdv Controller', () => {
   describe('createRdv', () => {
     afterEach(() => {
@@ -63,7 +68,10 @@ describe('Rdv Controller', () => {
         const res = {
           status: sinon.spy(),
           json: sinon.spy(),
-    };
+      };
+      await rdvController.createRdv(req, res);
+      expect(res.status.calledOnceWithExactly(401)).to.be.true;
+      expect(res.json.calledOnceWith(sinon.match.has('message', 'Impossible de créer le rdv'))).to.be.true;
 });
   
   });
@@ -246,102 +254,122 @@ describe('Rdv Controller', () => {
     });
   });
 
-  // // Test getRdvbyName function
-  // describe('getRdvbyName', () => {
-  //   it('should get rendez-vous by user name', async () => {
-  //     sinon.stub(User, 'find').callsFake((query, callback) => callback(null, {}));
-  //     sinon.stub(Rdv, 'find').callsFake((query, callback) => callback(null, {}));
-  //     sinon.stub(Rdv, 'populate').callsFake((param) => param);
-  //     const req = { body: { Compte: 'some_email' } };
-  //     const res = {
-  //       status: sinon.spy(),
-  //       json: sinon.spy(),
-  //     };
+  // Test getRdvbyName function
+  describe('getRdvbyName', () => {
+    
+    afterEach(()=>{
+      Userfind.restore();
+      find.restore();
+    })
+    it('should get rendez-vous by user name', async () => {
+      Userfind = sinon.stub(User, 'find').callsFake((query, callback) => callback(null, {}));
+      find = sinon.stub(Rdv, 'find').returns({
+        populate: sinon.stub().returns({
+          populate : sinon.stub().returns({
+            exec: sinon.stub().yields(false,MockedRdv)
+          })
+        })
+     })
+      const req = { body: { Compte: 'some_email' } };
+      const res = {
+        status: sinon.spy(),
+        json: sinon.spy(),
+      };
 
-  //     await rdvController.getRdvbyName(req, res);
+      await rdvController.getRdvbyName(req, res);
+      const expectedJson = MockedRdv;
+      expect(res.status.calledOnceWithExactly(200)).to.be.true;
+      expect(res.json.firstCall.args[0]).to.deep.equal(expectedJson);
 
-  //     expect(res.status.calledOnceWithExactly(200)).to.be.true;
-  //     expect(res.json.calledOnceWith(sinon.match.object)).to.be.true;
+    });
 
-  //     User.find.restore();
-  //     Rdv.find.restore();
-  //     Rdv.populate.restore();
-  //   });
+    it('should handle user not found by name', async () => {
+      Userfind = sinon.stub(User, 'find').callsFake((query, callback) => callback('User not found by name', null));
+      const req = { body: { Compte: 'some_email' } };
+      const res = {
+        status: sinon.spy(),
+        json: sinon.spy(),
+      };
 
-  //   it('should handle user not found by name', async () => {
-  //     sinon.stub(User, 'find').callsFake((query, callback) => callback('User not found by name', null));
-  //     const req = { body: { Compte: 'some_email' } };
-  //     const res = {
-  //       status: sinon.spy(),
-  //       json: sinon.spy(),
-  //     };
+      await rdvController.getRdvbyName(req, res);
 
-  //     await rdvController.getRdvbyName(req, res);
+      expect(res.status.calledOnceWithExactly(401)).to.be.true;
+      expect(res.json.calledOnceWith(sinon.match.has('message', 'User not found by name'))).to.be.true;
 
-  //     expect(res.status.calledOnceWithExactly(401)).to.be.true;
-  //     expect(res.json.calledOnceWith(sinon.match.has('message', 'User not found by name'))).to.be.true;
+      User.find.restore();
+    });
 
-  //     User.find.restore();
-  //   });
+    it('should handle retrieval error if rdv not found', async () => {
+      Userfind = sinon.stub(User, 'find').callsFake((query, callback) => callback(null, {}));
+      find = sinon.stub(Rdv, 'find').returns({
+        populate: sinon.stub().returns({
+          populate : sinon.stub().returns({
+            exec: sinon.stub().yields(true,{})
+          })
+        })
+      });
+      const req = { body: { Compte: 'some_email' } };
+      const res = {
+        status: sinon.spy(),
+        json: sinon.spy(),
+      };
 
-  //   it('should handle retrieval error by name', async () => {
-  //     sinon.stub(User, 'find').callsFake((query, callback) => callback(null, {}));
-  //     sinon.stub(Rdv, 'find').callsFake((query, callback) => callback('Error during retrieval by name', null));
-  //     const req = { body: { Compte: 'some_email' } };
-  //     const res = {
-  //       status: sinon.spy(),
-  //       json: sinon.spy(),
-  //     };
+      await rdvController.getRdvbyName(req, res);
+      const expectedJson = { message: 'Rdv non trouvé' };
+      expect(res.status.calledOnceWithExactly(401)).to.be.true;
+      expect(res.json.firstCall.args[0]).to.deep.equal(expectedJson);
 
-  //     await rdvController.getRdvbyName(req, res);
 
-  //     expect(res.status.calledOnceWithExactly(401)).to.be.true;
-  //     expect(res.json.calledOnceWith(sinon.match.has('message', 'Error during retrieval by name'))).to.be.true;
+    });
+  });
 
-  //     User.find.restore();
-  //     Rdv.find.restore();
-  //   });
-  // });
+  // Test getRdvByDate function
+  describe('getRdvByDate', () => {
+    afterEach(()=>{
+      find.restore();
+    })
+    it('should get rendez-vous by date', async () => {
+      find = sinon.stub(Rdv, 'find').returns({
+        populate: sinon.stub().returns({
+          populate : sinon.stub().returns({
+            exec: sinon.stub().yields(false,MockedRdv)
+          })
+        })
+      });
+      const req = { body: { Date: '2023-01-01' } };
+      const res = {
+        status: sinon.spy(),
+        json: sinon.spy(),
+      };
 
-  // // Test getRdvByDate function
-  // describe('getRdvByDate', () => {
-  //   it('should get rendez-vous by date', async () => {
-  //     sinon.stub(Rdv, 'find').callsFake((query, callback) => callback(null, {}));
-  //     sinon.stub(Rdv, 'populate').callsFake((param) => param);
-  //     const req = { body: { Date: '2023-01-01' } };
-  //     const res = {
-  //       status: sinon.spy(),
-  //       json: sinon.spy(),
-  //     };
+      await rdvController.getRdvByDate(req, res);
 
-  //     await rdvController.getRdvByDate(req, res);
+      expect(res.status.calledOnceWithExactly(200)).to.be.true;
+      expect(res.json.firstCall.args[0]).to.deep.equal(MockedRdv);
+    });
 
-  //     expect(res.status.calledOnceWithExactly(200)).to.be.true;
-  //     expect(res.json.calledOnceWith(sinon.match.object)).to.be.true;
+    it('should handle retrieval error by date', async () => {
+      find = sinon.stub(Rdv, 'find').returns({
+        populate: sinon.stub().returns({
+          populate : sinon.stub().returns({
+            exec: sinon.stub().yields(true,{})
+          })
+        })
+      });
+      const req = { body: { Date: '2023-01-01' } };
+      const res = {
+        status: sinon.spy(),
+        json: sinon.spy(),
+      };
 
-  //     Rdv.find.restore();
-  //     Rdv.populate.restore();
-  //   });
+      await rdvController.getRdvByDate(req, res);
 
-  //   it('should handle retrieval error by date', async () => {
-  //     sinon.stub(Rdv, 'find').callsFake((query, callback) => callback('Error during retrieval by date', null));
-  //     const req = { body: { Date: '2023-01-01' } };
-  //     const res = {
-  //       status: sinon.spy(),
-  //       json: sinon.spy(),
-  //     };
+      const expectedJson = { message: 'Rdv non trouvé' };
+      expect(res.status.calledOnceWithExactly(401)).to.be.true;
+      expect(res.json.firstCall.args[0]).to.deep.equal(expectedJson);
 
-  //     await rdvController.getRdvByDate(req, res);
+      Rdv.find.restore();
+    });
+  });
 
-  //     expect(res.status.calledOnceWithExactly(401)).to.be.true;
-  //     expect(res.json.calledOnceWith(sinon.match.has('message', 'Error during retrieval by date'))).to.be.true;
-
-  //     Rdv.find.restore();
-  //   });
-  // });
-
-  // Cleanup after all tests (optional)
-  // after(() => {
-  //   sinon.restore();
-  // });
 });
