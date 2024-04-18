@@ -104,8 +104,8 @@ passport.deserializeUser((id, done) => {
 // Middleware pour la gestion de sessions
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
 // Utilisez Passport comme middleware d'authentification
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 function ensureAuthenticated(req, res, next) {
   const path = req.path;
@@ -175,15 +175,15 @@ app.get("/", (req, res) => {
 // app.get('/user/login', (req, res) => {
 //   res.send('Vous devez vous connecter pour accéder à cette page');
 // });
-app.get('/succes', (req, res) => {
-  res.send('succes Page');
-});
-app.get('/erreur', (req, res) => {
-  res.send('Erreur Page');
-});
-app.get('/needAdmin',(req, res)=>{
-  res.send('Vous devez être administrateur pour accéder à cette page')
-})
+// app.egt('/succes', (req, res) => {
+//   res.send('succes Page');
+// });
+// app.get('/erreur', (req, res) => {
+//   res.send('Erreur Page');
+// });
+// app.get('/needAdmin',(req, res)=>{
+//   res.send('Vous devez être administrateur pour accéder à cette page')
+// })
 
 // Ajoutez une route protégée à laquelle seuls les utilisateurs authentifiés auront accès
 app.get('/protected', (req, res) => {
