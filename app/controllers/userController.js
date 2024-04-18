@@ -118,14 +118,6 @@ exports.userLogin = (req, res) => {
                                     res.json({ message: "Requête invalide" });
                                 }
                                 else {
-                                    let userData = {
-                                        id: user._id.toString(),
-                                        firstname: user.firstname,
-                                        lastname: user.lastname,
-                                        email: user.email,
-                                        admin: user.admin,
-                                        connected: true,
-                                    }
                                     res.status(200);
                                     res.json({ message: `Utilisateur connecté : ${user.email}` ,user});
                                     
@@ -145,7 +137,6 @@ exports.userLogin = (req, res) => {
                         }
                         else {
                             res.status(200);
-                            
                             res.json({ message: "Utilisateur est déjà connecté" ,user});
                         }
                     }

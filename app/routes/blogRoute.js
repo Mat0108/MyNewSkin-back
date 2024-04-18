@@ -149,5 +149,5 @@ module.exports = (server,corsConfig) => {
      *         description: Impossible de supprimer le blog 
     
     */
-    server.delete("/blog/get/:blogId",cors(corsConfig),blogController.deleteBlog);
+    server.delete("/blog/delete/:blogId",cors(corsConfig),blogController.deleteBlog);
 }

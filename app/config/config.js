@@ -3,9 +3,14 @@ exports.logoBase64 = ()=>{
 }
 exports.protectedRoute = ()=>{
     return {
-        unprotectedRoutes:["/user/register","/user/login","/form/create","/newsletterexpert/set","/newsletter/set","/succes","/erreur","/login"],
-        protectedRoutes:["/blog/set","/blog/get/:blogId","/protected"],
-        unprotectedPaths:["blog"],
-        protectedPaths:["user","form","rdv"]
+        adminRoutes:[],
+        unprotectedRoutes:["/user/register","/user/login","/users/forgetpassword","/users/validatetoken","/users/editpassword","/users/activate/:userId",
+        "/form/create","/newsletterexpert/set","/newsletter/set","/succes","/erreur","/login",
+        "/blog/","/blog/get/id/","/blog/get/alt/"
+    ],
+        protectedRoutes:["/user/logout/:userId","/users","/user/:userId","/users/expert",
+        "/form/get/:formId","/form/pdf/:formId","/form/mail/",
+        "/rdv/set","/rdv/","/rdv/get/:rdvId","/rdv/getbyuser/","/rdv/getbydate/","/rdv/update/:rdvId",
+        "/blog/set","/blog/delete/:blogId"],
     }
 }

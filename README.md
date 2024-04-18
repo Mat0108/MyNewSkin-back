@@ -46,5 +46,5 @@ docker-compose down --rmi all
 ## Deploy
 Avec l'acces au compte hub.docker ainsi qu'au compte de l'hebergeur
 ```bash
-.\deploy.bash
+.\deploy.bat
 ```

@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-let version = "2.1.0";
+let version = "3.0.0";
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -70,13 +70,23 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions)
 passport.use(new LocalStrategy({usernameField: 'email'},(email, password, done) => {
   User.findOne({ email: email  }, (err, user) => {
       if (err) return done(err);
-      if (!user) return done(null, false, { message: 'Incorrect email or password.' });
+      if (!user) return done(null, false, { message: 'Email ou mot de passe incorrect'});
       bcrypt.compare(password, user.password, (err, isMatch) => {
         if (err) return done(err);
           if (isMatch) {
-              return done(null, user,{ message: 'Logged In Successfully'});
+                user.connected = true;
+
+                user.save((error, user) => {
+                  if (error) {
+                      done(null, false, { message: "Impossible de connecter l'utilisateur" });
+                      
+                  }
+                  else {
+                    done(null, user,{ message: "L'utilisateur est connecté."});    
+                    }
+              });
           } else {
-              return done(null, false, { message: 'Incorrect email or password.' });
+              return done(null, false, { message: 'Email ou mot de passe incorrect'});
           }
       });
   });
@@ -99,40 +109,54 @@ app.use(passport.session());
 
 function ensureAuthenticated(req, res, next) {
   const path = req.path;
+  console.log(path,req.path)
   let routes = protectedRoute();
+  if(routes.adminRoutes.some(adminRoute => path === adminRoute)){
+    if(req.isAuthenticated()){
+      if(req.user.type === "3"){
+        return next();
+      }else{
+        res.redirect('/needAdmin');
+      }
+    }else{
+      res.redirect('/user/login');
+    }
+     
+  }
   // Check if the path is one of the unprotected paths
-  if (routes.unprotectedRoutes.some(unprotectedPath => path === unprotectedPath)) {
+  if (routes.unprotectedRoutes.some(unprotectedPath => path.includes(unprotectedPath))) {
       return next();
-  }else if (routes.protectedRoutes.some(protectedPath => path === protectedPath)) {
+  }else if (routes.protectedRoutes.some(protectedPath => path.includes(protectedPath))) {
     console.log("protectedPath")
     if (req.isAuthenticated()) {
       return next();
     } else {
       console.log("unprotectedPath")
-      res.redirect('/login');
+      res.redirect('/user/login');
     }
   }
-  // Check if the path matches the protected pattern
-  routes.unprotectedPaths.map(path => {
-    const unprotectedPattern = new RegExp("^/" + path + "/.*$"); // Regex to match anything under /path/
-    if (unprotectedPattern.test(path)) {
-        return next();
-    } 
-  })
-  routes.protectedPaths.map(path => {
-    const protectedPattern = new RegExp("^/" + path + "/.*$");
-    if (protectedPattern.test(path)) {
-        if (req.isAuthenticated()) {
-            return next();
-        } else {
-            res.redirect('/login');
-        }
-    } 
+  // // Check if the path matches the protected pattern
+  // routes.unprotectedPaths.map(path => {
+  //   const unprotectedPattern = new RegExp(`.*\/${path}.*\/?.*`); // Regex to match anything under /path/
+  //   console.log(unprotectedPattern,unprotectedPattern.test(path))
+  //   if (unprotectedPattern.test(path)) {
+  //       return next();
+  //   } 
+  // })
+  // routes.protectedPaths.map(path => {
+  //   const protectedPattern = new RegExp("^/" + path + "/.*$");
+  //   if (protectedPattern.test(path)) {
+  //       if (req.isAuthenticated()) {
+  //           return next();
+  //       } else {
+  //           res.redirect('/user/login');
+  //       }
+  //   } 
   
-  });
+  // });
 }
 // Middleware pour la gestion de sessions
-app.use(ensureAuthenticated);
+// app.use(ensureAuthenticated);
 
 
 // Serveur Swagger à l'URL "/api-docs"
@@ -144,20 +168,22 @@ app.get("/", (req, res) => {
   res.json({ message: `Bienvenue sur l'application Po. Version : ${version}` });
 });
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/succes',
-  failureRedirect: '/erreur'
-}));
-app.get('/login', (req, res) => {
-  res.send('Login Page');
-});
+// app.post('/user/login', passport.authenticate('local', {
+//   successRedirect: '/succes',
+//   failureRedirect: '/erreur'
+// }));
+// app.get('/user/login', (req, res) => {
+//   res.send('Vous devez vous connecter pour accéder à cette page');
+// });
 app.get('/succes', (req, res) => {
   res.send('succes Page');
 });
 app.get('/erreur', (req, res) => {
   res.send('Erreur Page');
 });
-
+app.get('/needAdmin',(req, res)=>{
+  res.send('Vous devez être administrateur pour accéder à cette page')
+})
 
 // Ajoutez une route protégée à laquelle seuls les utilisateurs authentifiés auront accès
 app.get('/protected', (req, res) => {
