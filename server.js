@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
-let version = "3.0.0";
+let version = "3.2.0";
 // Import de la documentation Swagger
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -215,14 +215,13 @@ newsLetterExpertRoute(app,corsOptions);
 const stripe = require('stripe')('sk_test_51OOzTwCf2iWivd4Sd2YqeU9jGQL5TwM8fm6to0lyYDzN6nURnKBagMnV7oMkG80vLBnxvpNwuzVeJo2A63ufyo6B00qwUvEVBo');
 
 const DOMAIN = process.env.ENV_TYPE == "prod" ? process.env.PROD_URL : process.env.DEV_URL;
-console.log('DOMAIN : ', DOMAIN)
 
 app.post('/create-checkout-session/:rdvId', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: 'price_1OQ4e0Cf2iWivd4SfLZGFXrK',
+        price: 'price_1P6yMlCf2iWivd4SQIpjy0ZZ',
         quantity: 1,
       },
     ],
