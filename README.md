@@ -1,6 +1,6 @@
-![alt text](https://github.com/Mat0108/PoSkin/blob/master/Front/public/images/logobig.png?raw=true)
+![alt text](https://github.com/Mat0108/PoSkin/blob/master/public/images/logobig.png?raw=true)
 
-
+[![codecov](https://codecov.io/gh/Mat0108/Po-Skin-Back/graph/badge.svg?token=EOQU2XYOQ3)](https://codecov.io/gh/Mat0108/Po-Skin-Back)
 
 ## Setup the env file with the template
 Demander à un menbre de la team Po. l'url de connection MongoDB
@@ -46,5 +46,5 @@ docker-compose down --rmi all
 ## Deploy
 Avec l'acces au compte hub.docker ainsi qu'au compte de l'hebergeur
 ```bash
-.\deploy.bash
+.\deploy.bat
 ```

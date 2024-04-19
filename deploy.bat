@@ -1,3 +1,3 @@
 @echo off
-docker build --pull --rm -f "server\Dockerfile" -t mat0108/po-api:prod "server"  
+docker build --pull --rm -f "Dockerfile" -t mat0108/po-api:prod "."  
 docker push mat0108/po-api:prod
