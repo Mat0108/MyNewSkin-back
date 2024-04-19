@@ -1,49 +1,13 @@
 version: "3.8"
 
 services:
-  # mongodb:
-  #   image: mongo:latest
-  #   restart: unless-stopped
-  #   container_name: mongodb
-  #   # variable d'environment pour setup mongo 
-  #   environment:
-  #     MONGO_INITDB_DATABASE: $MONGODB_DATABASE
-  #     MONGO_INITDB_ROOT_USERNAME: $MONGODB_USER
-  #     MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
-  #   ports:
-  #     - $MONGODB_PORT:$MONGODB_PORT
-  #   #on crée un volume pour stocker les données de mongo, pour stocker de maniere persitance 
-  #   volumes:
-  #     - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-  #     - ./mongo-volume:/data/db
-  #   working_dir: /data/db
-  #   networks:
-  #     - server
-  # mongo-express:
-  #   # on utilise la derniere version disponible de mongo-express
-  #   image: mongo-express:latest
-  #   restart: always
-  #   container_name: mongo_express
-  #   # variable d'environment pour permettre de confirgurer l'acces de mongo-express à mongo
-  #   environment:
-  #     ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGODB_USER
-  #     ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGODB_PASSWORD
-  #     ME_CONFIG_MONGODB_URL: $MONGODB_URL
-  #     ME_CONFIG_BASICAUTH_USERNAME: $MONGODB_USER
-  #     ME_CONFIG_BASICAUTH_PASSWORD: $MONGODB_PASSWORD
-  #   ports:
-  #     - '$MONGODB_EXPRESS_PORT:$MONGODB_EXPRESS_PORT'
-  #   depends_on:
-  #     - mongodb
-  #   networks:
-  #     - server
 
   server:
     container_name: server
     # depends_on:
     #   - mongodb
     #on build le server avec le dockerfile du dossier server
-    build: ./server
+    build: ./
     restart: always
     env_file: .env
     ports:
